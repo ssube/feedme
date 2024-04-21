@@ -63,6 +63,11 @@ posts. Each post will have a title, description, and some pictures attached.
 You can set the `*_API` variables even if they are not being used and switch back and forth with the `*_TOOL`
 variables.
 
+If you are using a private GPT2 model for generating example prompts, you will need to set `HF_TOKEN` to a HuggingFace
+API token that has permission to download that model.
+
+If you are posting to Civitai, you will need to set `CIVITAI_SESSION` to a session cookie.
+
 ### Docker
 
 ```shell
