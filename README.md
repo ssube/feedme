@@ -53,9 +53,9 @@ posts. Each post will have a title, description, and some pictures attached.
 docker run \
     --rm \
     -it \
-    -v data \
-    -v /tmp/feedme-container:/tmp/feedme-container:rw \
-    -e ROOT_PATH=/tmp/feedme-container \
+    -v ./data:/feedme/feedme/data:ro \
+    -v /tmp/feedme-posts:/tmp/feedme-posts:rw \
+    -e ROOT_PATH=/tmp/feedme-posts \
     -e COMFY_API="http://comfyui-server:8188" \
     -e LLM_API="http://ollama-server:11434" \
     -e ONNX_API="http://onnx-web-server:5000" \
