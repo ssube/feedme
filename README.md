@@ -114,7 +114,7 @@ docker run \
     -e OLLAMA_API="http://ollama-server:11434" \
     -e ONNX_API="http://onnx-web-server:5000" \
     -e PACKIT_DRIVER=ollama \
-    feedme
+    ssube/feedme:latest
 ```
 
 ## Architecture
