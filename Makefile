@@ -33,18 +33,24 @@ package-upload:
 
 lint-check:
 	black --check feedme/
+	black --check scripts/
 	black --check tests/
 	flake8 feedme
+	flake8 scripts
 	flake8 tests
 	isort --check-only --skip __init__.py --filter-files feedme
+	isort --check-only --skip __init__.py --filter-files scripts
 	isort --check-only --skip __init__.py --filter-files tests
 
 lint-fix:
 	black feedme/
+	black scripts/
 	black tests/
 	flake8 feedme
+	flake8 scripts
 	flake8 tests
 	isort --skip __init__.py --filter-files feedme
+	isort --skip __init__.py --filter-files scripts
 	isort --skip __init__.py --filter-files tests
 
 style: lint-fix
