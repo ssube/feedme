@@ -49,6 +49,20 @@ For each post, one or more of the interests will be randomly selected and agents
 is asked to come up with an idea, and after some debate between them, the best ideas will be turned into social media
 posts. Each post will have a title, description, and some pictures attached.
 
+### Configuration
+
+- Set `FEEDME_ENV` to load a `.env` file
+- Set `FEEDME_DATA` to the dataset folder that you want to use (defaults to [`feedme/data`](./feedme/data/))
+- Set `IMAGE_TOOL=comfy` and `COMFY_API` to use ComfyUI for image generation
+- Set `IMAGE_TOOL=onnx` and `ONNX_API` to use onnx-web for image generation
+- Set `PACKIT_DRIVER=ollama` and `OLLAMA_API` to use Ollama for text generation
+- Set `PACKIT_DRIVER=openai` and `OPENAI_API_BASE` to use vLLM for text generation (or other OpenAI-compatible APIs)
+- Set `POST_TOOL=civitai` and `CIVITAI_SESSION` to upload posts to Civitai
+- Set `POST_TOOL=html` to generate HTML pages for each post
+
+You can set the `*_API` variables even if they are not being used and switch back and forth with the `*_TOOL`
+variables.
+
 ### Docker
 
 ```shell
@@ -58,19 +72,14 @@ docker run \
     -v ./data:/feedme/feedme/data:ro \
     -v /tmp/feedme-posts:/tmp/feedme-posts:rw \
     -e ROOT_PATH=/tmp/feedme-posts \
+    -e IMAGE_TOOL=comfy \
+    -e POST_TOOL=html \
     -e COMFY_API="http://comfyui-server:8188" \
     -e OLLAMA_API="http://ollama-server:11434" \
     -e ONNX_API="http://onnx-web-server:5000" \
     -e PACKIT_DRIVER=ollama \
     feedme
 ```
-
-- Set `COMFY_API` to use ComfyUI for image generation
-- Set `ONNX_API` to use onnx-web for image generation
-- Set `PACKIT_DRIVER=ollama` and `OLLAMA_API` to use Ollama for text generation
-- Set `PACKIT_DRIVER=openai` and `OPENAI_API_BASE` to use vLLM for text generation
-
-Only one image generator is required, but you can set both.
 
 ## Architecture
 
