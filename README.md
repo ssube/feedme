@@ -6,7 +6,9 @@ in a loop and see what happens. The algorithm is yours, this is your feed, and y
 Enter a few topics or ideas, pick the right format, and make your own custom image feed complete with post titles,
 descriptions, and even gallery web pages. Sit back and watch as the adventurous agents in the default dataset explore
 the world and discover fascinating new places, or make them all creepy relatives selling Tupperware and watch the
-disaster ensue.
+disaster unfold.
+
+[Here are some posts](https://pub-b43eddfe0133430db1c8911cb46fb03c.r2.dev/index.html) using the included dataset.
 
 ## Requirements
 
@@ -27,7 +29,7 @@ Smaller models like Mistral should produce a post every 3-5 minutes, depending o
 the ensemble voting.
 
 Running the bot with one GPU is possible, if it has enough memory to run both models, or one of the models has been
-offloaded to CPU. With Mixtral and other mid-sized LLMs running on CPU, it should produce a post every 10-15 minutes.
+offloaded to CPU. With Mixtral and other mid-sized LLMs running on CPU, it should produce a post every 15-30 minutes.
 
 ## Running
 
