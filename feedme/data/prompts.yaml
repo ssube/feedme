@@ -1,0 +1,167 @@
+choose_image_size: >-
+    Based on the following description, please evaluate the best aspect ratio for a series of related images.
+    The available aspect ratios are landscape, portrait, and square.
+    The description is: {description}
+critique_image_binary: >-
+    Decide if this description is interesting and relevant to the theme of {theme}.
+    Reply with a yes or no answer. Reply with a single word, do not include any other information.
+    Only reply yes if the description is interesting and relevant. If it is not relevant, reply no.
+    The description is: {description}.
+critique_image_opinion: >-
+    Critique the following description.
+    Does the description sound fun? Would you consider it interesting?
+    Is the description relevant to the theme of {theme}?
+    The description is: {description}.
+critique_image_scale: >-
+    Critique the following post description and image captions.
+    Is the post fun and interesting?
+    Is the post description and the image captions relevant to the theme of {theme}?
+    The post description is: {description}.
+demo_idea: >-
+    You have been asked to create a post on the Civitai website. Come up with a title and description for the post.
+    Return each on a separate line. The theme can be anything you like.
+demo_post: >-
+    Using the available tools, launch the Civitai website and create a post with the following images: {images}.
+    The title should be '{title}' and the description should be '{description}'.
+    Pass images as an array of strings, do not wrap them in objects.
+    Call the launch_login function first and finish by calling the close_page function.
+    You can call more than one function, but make sure to separate them with a blank line.
+    The post should not be marked as mature.
+elaborate_characters: >-
+    Please elaborate on the physical appearance of the characters in the following description and list of keywords.
+    Describe the characters in detail, including their clothing, hair color, height, and pose.
+    Include specifics like tattoos, piercings, jewelry, and other visible details.
+    The description is:
+
+    {description}
+
+    The keywords are:
+
+    {keywords}
+elaborate_quality: >-
+    Please add some quality keywords to the end of the following prompt.
+    Describe the visual style, the lighting, photography techniques, and any other details that contribute to the quality of an image or video.
+    Use a combination of adjectives and descriptive phrases to create a vivid description of a high-quality production.
+    Some example keywords include: {quality_keywords}.
+
+    Reply with a comma-separated list of quality keywords that you would like to add to the prompt, based on the examples.
+    The original prompt is:
+
+    {keywords}
+elaborate_scene: >-
+    Please elaborate on the details of the following scene.
+    Describe the lighting, the textures, and any other visible details.
+    Use a combination of adjectives and descriptive phrases to create a vivid image of the scene.
+    The scene is:
+
+    {scene}
+generate_concepts: >-
+    Generate a concept that appeals to your interests.
+    The concept should be a short phrase or sentence that is fun and engaging.
+    Reply with {min_words} to {max_words} words.
+generate_description: >-
+    Carefully consider all of the really good ideas and combine them into a single concept that is even more interesting and engaging than before.
+    Make sure you include aspects of each topic in the post, but combine them into one cohesive idea based on the theme of {theme}.
+    {modifier}
+    Write a one or two sentence caption for a {post_format} that will attract new followers and keep them intrigued.
+    Skip the post title, only write a description.
+    The following is list of really good ideas:
+
+    {ideas}
+generate_ideas: >-
+    Come up with an interesting idea for a {post_format} based on the theme of {theme} that appeals to your interest in {interest}.
+    Write a description that is fun and engaging. Do not include a title.
+    Reply with one or two paragraphs that describe the concept in visual detail.
+    {modifier}
+generate_keywords: >-
+    Write a prompt based on the following description and theme. Good prompts are a list of keywords separated by commas.
+    Make sure to include the most important concepts, characters, and objects. The prompt should capture the theme of {theme}.
+    Only include tangible objects and visible concepts in the prompt, do not include any abstract or intangible ideas.
+    Here are some abstract concepts that you must not use in the prompt:
+
+    {example_concepts}
+
+    Do not copy the example prompts, but use them as a guide for creating your own prompt that is relevant to the theme of {theme}.
+    The description is:
+
+    {description}
+generate_prompt: >-
+    Summarize the following description into a single list of keywords and phrases, separated by commas.
+    Include the most important concepts, characters, and places. Emphasize visual details and physical actions.
+    Only include tangible objects and visible concepts in the prompt, do not include any abstract or intangible ideas.
+    Here are some examples of good lists:
+
+    {example_prompts}
+
+    The characters are:
+
+    {characters}
+
+    The scene is:
+
+    {scene}
+
+    Important keywords include:
+
+    {keywords}
+negative_prompt: child, young, teen, underage, kid, bad hands, distorted, mutated, deformed
+post_notice: >-
+    {body}
+
+    This post was automatically generated by {bot_name}, a media generator with HITL approval.
+    Please message me if you have any questions or concerns.
+    The unique hash for this post is {hash}.
+rank_concepts_binary: >-
+    Rank this concept based on how interesting it seems to you: {concept}.
+    Is the concept fun and interesting?
+    Reply with a yes or no answer. Reply with a single word, do not include any other information.
+    The concept is: {concept}
+rank_concepts_scale: >-
+    Rank this concept based on how interesting it seems to you. Is the concept fun and interesting?
+    Reply with rank from 1 to {max_score}. A rank of 1 is boring, while a rank of {max_score} is very interesting.
+    Be critical and honest, do not be afraid to give a low score.
+    Only return a single digit number, do not include any commentary or text.
+    The concept is: {concept}
+rank_image_sort: >-
+    Update this JSON array to sort the image from most interesting to least interesting, based on the image caption and your interest in {interest}.
+    Remove any images that are not relevant to the theme of {theme}. Only include images that you think are relevant and interesting.
+    Only return a JSON array, do not return anything else or describe what you are doing.
+    Only include image filenames from the original array, do not make up new filenames or add anything.
+    {careful_warning}
+    The images are:
+
+    {image_data}
+rank_image_sort_retry: >-
+    Please be very careful with your ranking and make sure you only return a JSON array.
+rank_image_binary: >-
+    Rank this image based on its caption and relevance to the theme of {theme}.
+    Is the image interesting and relevant to the theme?
+    Reply with a yes or no answer. Reply with a single word, do not include any other information.
+    Only reply yes if the image is relevant. If it is not relevant, reply no.
+    The image caption is:
+
+    {caption}
+rank_image_scale: >-
+    Decide if these image captions are relevant to the post description and the theme of {theme}.
+    Reply with a rating from 1 to 5. Reply with a single digit number, do not include any other information.
+    1 is completely unrelated to the theme and 5 is very related. Do not return a rating of 3.
+    The post description is:
+
+    {description}.
+rank_image_scale_variable: >-
+    Rank this image based on its relevance to the post's theme. Reply with a single digit number, do not include any commentary or text.
+    A rank of 1 is not relevant to the theme of {theme} at all. A rank of {max_score} is very relevant to the theme.
+    Be critical and honest, do not be afraid to give a low score. Make a good decision and avoid giving a score of 3.
+    It is very important that you make sure the image shares some key concepts with the theme.
+    If the image is not directly related to the theme, please rate it 1.
+    The image caption is:
+
+    {caption}
+remove_concepts: >-
+    Please remove any abstract concepts from the following list of keywords.
+    Only include tangible objects and visible concepts. Remove sounds, smells, emotions, and abstract ideas.
+    Keep the keywords that describe physical objects, actions, and visible details.
+    Keep poses, clothing, facial expressions, and body parts.
+    The keywords are:
+
+    {keywords}

@@ -1,0 +1,44 @@
+formats: [
+    "social media post",
+    "brief daydream",
+    "journal entry",
+]
+
+modifiers:
+    "everyone": >-
+        You are creating a post that will appeal to almost everyone.
+    "specific": >-
+        You are creating a post that will appeal to people who are already interested in the topic and want to learn more.
+    "niche": >-
+        You are creating a post for a specific audience and their singular interest.
+
+checkpoints: [
+    "diffusion-sdxl-dynavision-0-5-5-7",
+    "diffusion-sdxl-faetastic-v2",
+    "diffusion-sdxl-photographic-fantastic-creatures-v1-0",
+    "diffusion-sdxl-protovision-xl-v0-6-3-0",
+]
+
+onnx:
+    filter: Civitai/promptgen-sfw-250k
+    remove: "(art by ,|greg rutkowski|artgerm|artstation|deviantart| and |trending| on |Greg Rutkowski|Alphonse Mucha|featured in )"
+    retries: 20
+    poll: 15
+    batch: 1
+    extra: 3
+
+llms:
+    gpt2: Civitai/promptgen-sfw-250k
+    creative: nous-hermes2-mixtral
+    creative_temperature: 0.65
+    manager: nous-hermes2-mixtral
+    manager_temperature: 0.10
+
+sizes: {
+  landscape: [1280, 960],
+  portrait: [960, 1280],
+  square: [1024, 1024],
+}
+
+bot:
+    name: "FeedMe"

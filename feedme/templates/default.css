@@ -1,0 +1,66 @@
+/* General Body Styling */
+body {
+    background-color: #001f3f; /* Rich navy blue background */
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Card Styles */
+.post {
+    background-color: #fdfdfd; /* Off-white paper for cards */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Soft drop shadow for the card */
+    margin-bottom: 20px;
+    overflow: hidden; /* Ensures the border-radius is respected */
+}
+
+.post-header {
+    background-color: #eeeeee; /* Slightly different shade for the header */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #003366; /* Dark blue that complements the navy blue background */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle drop shadow for the header */
+}
+
+.post-header p {
+    white-space: pre-line;
+}
+
+.post-content {
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(512px, 1fr)); /* Responsive grid layout */
+    gap: 10px; /* Space between images */
+}
+
+.post-content img {
+    width: 100%; /* Make images expand to fill the grid area */
+    height: auto;
+    border-radius: 4px; /* Optional: round corners for images */
+}
+
+.post-actions {
+    background-color: #f5f5f5; /* Slightly different shade for the footer */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.05); /* Subtle drop shadow at the top of the footer */
+}
+
+.post-actions button {
+    background-color: #007bff; /* Bootstrap primary blue for buttons */
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.post-actions button:hover {
+    background-color: #0056b3; /* Darken the button color on hover */
+}

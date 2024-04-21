@@ -1,0 +1,56 @@
+quality: [
+    "cinematic film still",
+    "shallow depth of field",
+    "highly detailed",
+    "high budget",
+    "epic",
+    "RAW photo",
+    "photorealistic",
+    "color graded",
+    "cinematic",
+    "atmospheric lighting",
+    "hyper realistic",
+    "fine textures",
+    "volumetric textures",
+    "color correction",
+    "highly detailed",
+    "intricate",
+    "masterful",
+    "high dynamic range",
+    "expert lighting",
+    "studio perfection",
+    "high-speed capture",
+    "monochrome elegance",
+    "depth of color",
+    "unmatched clarity",
+    "stunning vibrancy",
+    "dynamic contrast",
+    "vivid saturation",
+    "rich shadows",
+    "subtle tones",
+    "sublime highlights",
+    "luminous colors",
+    "luscious textures",
+    "harmonious composition",
+    "exquisite detail",
+    "ethereal glow",
+    "timeless elegance",
+    "radiant hues",
+    "artistic depth",
+]
+
+# TODO: Add more and better concepts
+remove: [
+    "love",
+    "nostalgia",
+    "smell",
+    "scent",
+]
+
+# TODO: unused, remove
+concepts: [
+    "enchanted forest",
+    "magical garden",
+    "masquerade ball",
+    "underwater city",
+]

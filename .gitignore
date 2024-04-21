@@ -1,0 +1,12 @@
+__pycache__/
+datasets/
+dist/
+venv/
+*.egg-info/
+
+*.env
+*.log
+*.swp
+
+.coverage
+coverage.xml
