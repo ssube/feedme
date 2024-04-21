@@ -17,6 +17,13 @@ body {
     overflow: hidden; /* Ensures the border-radius is respected */
 }
 
+.post-index {
+    height: 800px;
+    padding: 15px;
+    gap: 10px; /* Space between images */
+    overflow: auto;
+}
+
 .post-header {
     background-color: #eeeeee; /* Slightly different shade for the header */
     padding: 10px 20px;

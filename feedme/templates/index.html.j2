@@ -14,11 +14,11 @@
         <p>{{ description }}</p>
       </div>
     </div>
-    <div class="post-content">
+    <div class="post-index">
       <ol>
         {% for post in posts %}
         <li>
-          <a href="{{ post.folder }}/post.html">{{ post.title }}</a>
+          <a href="{{ post.folder }}/post.html">{{ post.timestamp }} - {{ post.title }}</a>
         </li>
         {% endfor %}
       </ol>
