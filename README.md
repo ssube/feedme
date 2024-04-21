@@ -20,6 +20,10 @@ disaster unfold.
     - [Docker](#docker)
   - [Architecture](#architecture)
   - [Datasets](#datasets)
+    - [Compatible models](#compatible-models)
+      - [Compatible GPT2s](#compatible-gpt2s)
+      - [Compatible LLMs](#compatible-llms)
+      - [Compatible SD checkpoints](#compatible-sd-checkpoints)
     - [Generating more interests](#generating-more-interests)
     - [Images without people](#images-without-people)
 
@@ -36,7 +40,7 @@ VRAM requirements depend on the size of the images and the LLM you select.
 - 0GB VRAM minimum, everything can run on CPU (64GB main memory recommended).
 - 32GB VRAM recommended for SDXL and Mistral (2x16GB GPUs works well).
 - 64GB VRAM recommended for hires and Mixtral (1x24GB + 1x40GB, for example).
-- 96GB VRAM recommended for Smaug and other Qwen 2-based models (1x16GB + 1x80GB, for example).
+- 96GB VRAM recommended for Smaug and other Qwen-based models (1x16GB + 1x80GB, for example).
 
 Smaller models like Mistral should produce a post every 3-5 minutes, depending on GPU performance and success rate of
 the ensemble voting.
@@ -114,6 +118,61 @@ Architecture:
 ![an infographic showing the feedme architecture](./docs/architecture.png)
 
 ## Datasets
+
+### Compatible models
+
+#### Compatible GPT2s
+
+These are listed separately from the LLMs because the GPT2 prompt generation runs within the bot, using specialized
+models.
+
+- `Civitai/promptgen-*`
+  - Used `Civitai/promptgen-sfw-250k` for the examples
+- Auto1111 promptgen models
+  - https://huggingface.co/AUTOMATIC/promptgen-lexart
+  - https://huggingface.co/AUTOMATIC/promptgen-majinai-safe
+
+Any GPT2-based model that has been fine-tuned on the `comma, separated, keyword` structure and appropriate keywords
+for prompting should work.
+
+#### Compatible LLMs
+
+Any LLM supported by your engine (Ollama or vLLM) should work. Some will produce better results than others. The
+Mistral and Mixtral family are good general-purpose choices.
+
+- `mistral-openorca`
+  - Small and fast, generally good results
+  - https://huggingface.co/Open-Orca/Mistral-7B-OpenOrca
+  - https://ollama.com/library/mistral-openorca
+- `nous-hermes2-mixtral`
+  - Medium size and performance, good results
+  - Used for the examples
+  - https://huggingface.co/NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO
+  - https://ollama.com/library/nous-hermes2-mixtral
+- `smaug`
+  - Large but fast on an appropriate GPU, very good results
+  - https://huggingface.co/abacusai/Smaug-72B-v0.1
+  - https://ollama.com/sammcj/smaug
+
+#### Compatible SD checkpoints
+
+Any SD checkpoint supported by your engine (ComfyUI or onnx-web) should work. Some will produce better results than
+others. Make sure to select a model that matches your subject matter (realistic landscapes, anime characters, etc).
+
+For SD v1.5:
+
+- https://civitai.com/models/4384/dreamshaper?modelVersionId=128713
+- https://civitai.com/models/14065/faetastic?modelVersionId=16553
+- https://civitai.com/models/4201/realistic-vision-v60-b1?modelVersionId=130072
+
+For SDXL:
+
+- https://civitai.com/models/112902/dreamshaper-xl?modelVersionId=126688
+- https://civitai.com/models/122606/dynavision?modelVersionId=297740
+- https://civitai.com/models/129681/sdxl-faetastic?modelVersionId=291443
+- https://civitai.com/models/260664/lucignoloxl-fantastic-subjects-photography?modelVersionId=294013
+
+LoRAs and other networks are not supported yet.
 
 ### Generating more interests
 
