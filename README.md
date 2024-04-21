@@ -57,10 +57,18 @@ docker run \
     -v /tmp/feedme-posts:/tmp/feedme-posts:rw \
     -e ROOT_PATH=/tmp/feedme-posts \
     -e COMFY_API="http://comfyui-server:8188" \
-    -e LLM_API="http://ollama-server:11434" \
+    -e OLLAMA_API="http://ollama-server:11434" \
     -e ONNX_API="http://onnx-web-server:5000" \
+    -e PACKIT_DRIVER=ollama \
     feedme
 ```
+
+- Set `COMFY_API` to use ComfyUI for image generation
+- Set `ONNX_API` to use onnx-web for image generation
+- Set `PACKIT_DRIVER=ollama` and `OLLAMA_API` to use Ollama for text generation
+- Set `PACKIT_DRIVER=openai` and `OPENAI_API_BASE` to use vLLM for text generation
+
+Only one image generator is required, but you can set both.
 
 ## Architecture
 

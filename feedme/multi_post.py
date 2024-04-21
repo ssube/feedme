@@ -9,8 +9,7 @@ from shutil import move, rmtree
 from time import monotonic
 from urllib.request import urlretrieve
 
-from langchain_community.chat_models import ChatOllama
-from packit.agent import Agent
+from packit.agent import Agent, agent_easy_connect
 from packit.groups import Panel
 from packit.results import int_result
 from packit.tracing import set_tracer, trace
@@ -50,7 +49,6 @@ if environ.get("DEBUG", "false").lower() == "true":
     debugpy.wait_for_client()
 
 
-openai_server = environ["LLM_API"]
 onnx_root = environ["ONNX_API"]
 root_path = environ["ROOT_PATH"]
 
@@ -63,24 +61,19 @@ working_path = path.join(root_path, "working")
 
 
 # configure LLMs
-manager_llm = ChatOllama(
-    temperature=float(llms["manager_temperature"]),
+manager_llm = agent_easy_connect(
     model=llms["manager"],
-    base_url=openai_server,
-    num_ctx=int(environ.get("OLLAMA_NUM_CTX", 2**12)),
-    num_gpu=int(environ.get("OLLAMA_NUM_GPU", 50)),
+    temperature=float(llms["manager_temperature"]),
 )
-creative_llm = ChatOllama(
-    temperature=float(llms["creative_temperature"]),
+creative_llm = agent_easy_connect(
     model=llms["creative"],
-    base_url=openai_server,
-    num_ctx=int(environ.get("OLLAMA_NUM_CTX", 2**12)),
-    num_gpu=int(environ.get("OLLAMA_NUM_GPU", 50)),
+    temperature=float(llms["creative_temperature"]),
 )
 
 
 def random_interest(k=6):
-    return sample(list(special_interests.keys()), k=k)
+    interests = list(special_interests.keys())
+    return sample(interests, k=k)
 
 
 def InterestAgent(interest: str, **kwargs):
