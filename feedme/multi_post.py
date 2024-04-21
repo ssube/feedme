@@ -587,7 +587,7 @@ def main(
                 logger.error("no top concepts found")
                 continue
 
-            theme = cleanup_sentence(top_concepts[0][0])
+            theme = cleanup_sentence(top_concepts[0][0], trailing_period=False)
             input = {
                 "interests": interests,
                 "images": [],

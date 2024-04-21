@@ -123,8 +123,12 @@ def monotonic_delta(start: float) -> tuple[float, float]:
     return (last - start, last)
 
 
-def cleanup_sentence(sentence: str) -> str:
+def cleanup_sentence(sentence: str, trailing_period=True) -> str:
     sentence = sentence.strip()
     sentence = sentence.replace("..", ".")
     sentence = sentence.strip("\"'")
+
+    if not trailing_period and sentence.endswith("."):
+        sentence = sentence[:-1]
+
     return sentence

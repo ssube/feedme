@@ -87,9 +87,7 @@ def generate_prompt(agent, description, qk=6):
         scene=scene,
     )
     prompt = remove_abstract_concepts(agent, prompt)
-    prompt = cleanup_sentence(prompt)
-    if prompt.endswith("."):
-        prompt = prompt[:-1]
+    prompt = cleanup_sentence(prompt, trailing_period=False)
 
     quality = sample(quality_keywords, k=qk)
     return prompt + ", " + ", ".join(quality)
