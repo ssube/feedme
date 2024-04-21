@@ -7,6 +7,7 @@ from traceloop.sdk.decorators import task
 
 from feedme.data import llms, prompts, quality_keywords, remove_concepts
 from feedme.utils.gpt2 import generate_text
+from feedme.utils.misc import cleanup_sentence
 
 logger = getLogger(__name__)
 
@@ -86,5 +87,9 @@ def generate_prompt(agent, description, qk=6):
         scene=scene,
     )
     prompt = remove_abstract_concepts(agent, prompt)
+    prompt = cleanup_sentence(prompt)
+    if prompt.endswith("."):
+        prompt = prompt[:-1]
+
     quality = sample(quality_keywords, k=qk)
     return prompt + ", " + ", ".join(quality)

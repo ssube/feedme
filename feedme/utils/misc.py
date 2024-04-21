@@ -121,3 +121,10 @@ def hash_post(post: dict):
 def monotonic_delta(start: float) -> tuple[float, float]:
     last = monotonic()
     return (last - start, last)
+
+
+def cleanup_sentence(sentence: str) -> str:
+    sentence = sentence.strip()
+    sentence = sentence.replace("..", ".")
+    sentence = sentence.strip("\"'")
+    return sentence

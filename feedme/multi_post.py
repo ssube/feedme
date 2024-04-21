@@ -28,6 +28,7 @@ from feedme.tools.html_tools import template_post
 from feedme.tools.image_tools import get_image_data
 from feedme.tools.onnx_tools import download_input_images, generate_image_tool
 from feedme.utils.misc import (
+    cleanup_sentence,
     format_bullet_list,
     hash_post,
     monotonic_delta,
@@ -586,7 +587,7 @@ def main(
                 logger.error("no top concepts found")
                 continue
 
-            theme = top_concepts[0][0]
+            theme = cleanup_sentence(top_concepts[0][0])
             input = {
                 "interests": interests,
                 "images": [],
@@ -662,6 +663,7 @@ def main(
                         post_description = generate_description(
                             interests, social_media_manager, ideas
                         )
+                        post_description = cleanup_sentence(post_description)
 
                         # run the agents
                         # summarize the post
