@@ -43,9 +43,6 @@ from feedme.utils.promptgen import generate_prompt
 # set up logging and tracing
 logger = logger_with_colors(__name__, level="DEBUG")
 
-Traceloop.init(disable_batch=True)
-set_tracer("traceloop")
-
 
 # start the debugger, if needed
 if environ.get("DEBUG", "false").lower() == "true":
