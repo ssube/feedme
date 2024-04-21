@@ -1,13 +1,9 @@
-from base64 import b64encode
 from collections import Counter
-from hashlib import sha256
-from json import dumps, loads
+from json import dumps
 from os import environ, makedirs, path
 from random import choice, randint, sample
-from re import sub
 from shutil import move, rmtree
 from time import monotonic
-from urllib.request import urlretrieve
 
 from packit.agent import Agent, agent_easy_connect
 from packit.groups import Panel
@@ -29,9 +25,18 @@ from feedme.data import (
 )
 from feedme.tools.civitai_tools import close_page, create_post, launch_login
 from feedme.tools.html_tools import template_post
-from feedme.tools.onnx_tools import generate_image_tool
+from feedme.tools.image_tools import get_image_data
+from feedme.tools.onnx_tools import download_input_images, generate_image_tool
+from feedme.utils.misc import (
+    format_bullet_list,
+    hash_post,
+    monotonic_delta,
+    parse_ranking,
+    rank_list,
+    sanitize_name,
+    str_parser,
+)
 from feedme.utils.promptgen import generate_prompt
-from feedme.utils.utils import get_image_data
 
 # set up logging and tracing
 logger = logger_with_colors(__name__, level="DEBUG")
@@ -49,11 +54,8 @@ if environ.get("DEBUG", "false").lower() == "true":
     debugpy.wait_for_client()
 
 
-onnx_root = environ["ONNX_API"]
-root_path = environ["ROOT_PATH"]
-
-
 # set up paths
+root_path = environ["ROOT_PATH"]
 approval_path = path.join(root_path, "approval")
 approved_path = path.join(root_path, "approved")
 rejected_path = path.join(root_path, "rejected")
@@ -97,142 +99,10 @@ def make_post_paths():
     makedirs(working_path, exist_ok=True)
 
 
-def download_images(images: list[str], dest: str):
-    """
-    TODO: move to utils
-    """
-    for i, image in enumerate(images):
-        logger.info("downloading image: %s", image)
-        # get image and json metadata
-        urlretrieve(
-            onnx_root + "/output/" + image + ".png", path.join(dest, f"{i}.png")
-        )
-        urlretrieve(
-            onnx_root + "/output/" + image + ".png.json",
-            path.join(dest, f"{i}.png.json"),
-        )
-
-
-def get_filename(item):
-    """
-    TODO: move to parsers
-    """
-    if isinstance(item, (list, str)):
-        return item
-    elif isinstance(item, dict):
-        possible_subkeys = [
-            "filename",
-            "ranks",
-            "images",
-            "image_filenames",
-            "image_ranking",
-            "ranked_filenames",
-            "sorted_images",
-            "sorted_filenames",
-            "imagesSorted",
-            "updatedImages",
-        ]
-
-        # if the root value is a dict with a single subkey, assume that's the ranking
-        if len(item) == 1:
-            item = list(item.values())[0]
-
-        for subkey in possible_subkeys:
-            # this needs to check for dict-ness every time, because the item might be a list nested in a dict
-            if isinstance(item, dict) and subkey in item:
-                item = item[subkey]
-
-        return item
-    else:
-        return None
-
-
-def parse_ranking(ranking: str) -> list[str]:
-    """
-    TODO: move to parsers
-    """
-    # collapse lines
-    ranking = ranking.replace("\n", "").replace("\r", "")
-
-    ranking = sub(
-        r"<\/\|.*$", "", ranking
-    )  # sometimes the system prompt leaks into the output, like <|assistant|>
-    ranking = sub(
-        r"^[\s\w\.,:]+ \[", "", ranking
-    )  # sometimes the output will have a leading comment, like "This is the list: []"
-    ranking = ranking.replace('""', '"')  # the robots will double some JSON quotes
-
-    # if they forgot to close the array, fix that
-    if ranking.endswith('"}'):
-        ranking = ranking + "]"
-
-    # if they forgot to open the array and left it out entirely, fix that
-    if ranking.startswith('{"'):
-        ranking = "[" + ranking
-
-    # file extension fixups
-    ranking = ranking.replace(".0.png", ".png")
-    ranking = ranking.replace(" .png", ".png")
-    ranking = ranking.replace("..png", ".png")
-    ranking = ranking.replace(". png", ".png")
-
-    # remove leading/trailing whitespace
-    ranking = ranking.strip()
-
-    logger.info("ranking after fixups: %s", ranking)
-    ranking = loads(ranking)
-    logger.debug("ranking were valid JSON: %s", ranking)
-
-    # attempt to extract the ranking from a list of strings, which may be nested in a dict, or many dicts
-    ranking = get_filename(ranking)
-    if isinstance(ranking, list):
-        return [get_filename(item) for item in ranking]
-
-    raise ValueError("Invalid ranking format")
-
-
-def format_bullet_list(items: list[str]) -> str:
-    """
-    TODO: replace with packit formatting
-    """
-    # remove newlines within each item
-    items = [item.replace("\n", " ").replace("\r", "") for item in items]
-    return "\n".join(f"- {item}" for item in items)
-
-
-def rank_list(ranking: list[str], max_rank=3):
-    """
-    TODO: move to utils
-    """
-    score = {}
-    for i, image in enumerate(ranking):
-        score[image] = max(max_rank - i, 1)
-
-    return score
-
-
-def hash_post(post: dict):
-    """
-    TODO: move to utils
-    """
-    return b64encode(
-        sha256(dumps(post, sort_keys=True).encode("utf-8")).digest(),
-        altchars=b"-_",
-    ).decode("utf-8")
-
-
 def append_post_notice(body: str, hash: str):
     bot_name = get_bot_name()
     notice_template = prompts["post_notice"]
     return notice_template.format(body=body, bot_name=bot_name, hash=hash)
-
-
-def monotonic_delta(start: float) -> tuple[float, float]:
-    """
-    TODO: move to utils
-    """
-    last = monotonic()
-    return (last - start, last)
 
 
 def do_post(post_slug, post_description, post_hash, post, tool="html"):
@@ -319,8 +189,8 @@ def concept_ranking_each_bool(interest_agents, concepts):
 def concept_ranking_each_scale(
     interest_agents,
     concepts,
-    ranking_threshold=3,
-    max_score=5,
+    ranking_threshold=3,  # TODO: move to data
+    max_score=5,  # TODO: move to data
     count=1,
 ):
     selected_concepts = []
@@ -500,8 +370,8 @@ def image_ranking_each_scale(
     image_data,
     count,
     description,
-    ranking_threshold=3.5,
-    max_score=5,
+    ranking_threshold=3.5,  # TODO: move to data
+    max_score=5,  # TODO: move to data
 ):
     selected_images = []
     selected_rankings = Counter()
@@ -555,10 +425,6 @@ def image_ranking_each_scale(
     logger.info("top images: %s", top_images)
 
     return top_images
-
-
-def str_parser(result, **kwargs):
-    return str(result)
 
 
 @task()
@@ -663,18 +529,6 @@ def rate_post(critics, post_captions, post_path):
     return average_rating
 
 
-def sanitize_name(name: str) -> str:
-    """
-    Replace all non-alphanumeric characters with underscores, then remove repeated underscores.
-
-    TODO: move to utils
-    """
-
-    name = sub(r"\W", "_", name)
-    name = sub(r"_+", "_", name)
-    return name
-
-
 @task()
 def generate_ideas(interests, interest_agents):
     ideas = {}
@@ -700,14 +554,14 @@ def generate_description(interests, social_media_manager, ideas):
 
 
 def main(
-    approval_threshold=0.65,
-    concept_count=20,
+    approval_threshold=0.65,  # TODO: move to data
+    concept_count=20,  # TODO: move to data
     fixed_post_format=None,
     max_post_retry=3,
-    min_image_count=2,
-    max_image_count=4,
-    min_interest_count=3,
-    max_interest_count=6,
+    min_image_count=3,  # TODO: move to data
+    max_image_count=5,  # TODO: move to data
+    min_interest_count=2,  # TODO: move to data
+    max_interest_count=5,  # TODO: move to data
 ):
     post_ratings = []
     post_times = []
@@ -769,7 +623,7 @@ def main(
                         # download images
                         images = input["images"]
                         if len(images) > 0:
-                            download_images(images, working_path)
+                            download_input_images(images, working_path)
 
                             # load captions and sizes
                             image_data = get_image_data(working_path)

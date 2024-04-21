@@ -35,10 +35,6 @@ def list_posts(root: str):
 def template_page(
     title, posts, template=None
 ):
-    """
-    Generate a webpage for a post using one of the HTML templates.
-    """
-
     if template is None:
         template = DEFAULT_TEMPLATE
 

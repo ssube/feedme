@@ -1,10 +1,11 @@
 from io import BytesIO
 from json import dumps
 from logging import getLogger
-from os import environ
+from os import environ, path
 from random import choice, randint
 from time import sleep
 from typing import List, Literal
+from urllib.request import urlretrieve
 
 import requests
 from packit.tracing import trace
@@ -180,3 +181,16 @@ def download_images(host: str, key: str) -> List[Image.Image]:
             raise ValueError("error downloading image")
 
     return images
+
+
+def download_input_images(images: list[str], dest: str):
+    for i, image in enumerate(images):
+        logger.info("downloading image: %s", image)
+        # get image and json metadata
+        urlretrieve(
+            onnx_root + "/output/" + image + ".png", path.join(dest, f"{i}.png")
+        )
+        urlretrieve(
+            onnx_root + "/output/" + image + ".png.json",
+            path.join(dest, f"{i}.png.json"),
+        )
