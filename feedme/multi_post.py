@@ -24,6 +24,7 @@ from feedme.data import (
     special_interests,
 )
 from feedme.tools.civitai_tools import close_page, create_post, launch_login
+from feedme.tools.comfy_tools import generate_images
 from feedme.tools.html_tools import template_post
 from feedme.tools.image_tools import get_image_data
 from feedme.tools.onnx_tools import download_input_images, generate_image_tool
@@ -53,6 +54,11 @@ if environ.get("DEBUG", "false").lower() == "true":
     debugpy.listen(5679)
     logger.info("waiting for debugger to attach...")
     debugpy.wait_for_client()
+
+
+# pick tools
+image_tool = environ.get("IMAGE_TOOL", "onnx")
+post_tool = environ.get("POST_TOOL", "html")
 
 
 # set up paths
@@ -106,7 +112,17 @@ def append_post_notice(body: str, hash: str):
     return notice_template.format(body=body, bot_name=bot_name, hash=hash)
 
 
-def do_post(post_slug, post_description, post_hash, post, tool="html"):
+def do_images(prompt, count, size, tool=image_tool):
+    if tool == "comfy":
+        return generate_images(prompt, count, size=size)
+    elif tool == "onnx":
+        return generate_image_tool(prompt, count, size=size)
+    else:
+        logger.error("unknown image tool: %s", tool)
+        return []
+
+
+def do_post(post_slug, post_description, post_hash, post, tool=post_tool):
     description = append_post_notice(post_description, post_hash)
     if tool == "civitai":
         # post to Civitai
@@ -696,7 +712,7 @@ def main(
                             set_save_path(working_path)
                             top_images = [
                                 (image, None)
-                                for image in generate_image_tool(
+                                for image in do_images(
                                     post_keywords, count, size=image_size
                                 )
                             ]

@@ -11,8 +11,12 @@ from random import choice, randint
 
 import websocket  # NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
 from PIL import Image
+from traceloop.sdk.decorators import tool
+from logging import getLogger
 
 from feedme.data import checkpoint_models, get_save_path, prompts, size_presets
+
+logger = getLogger(__name__)
 
 server_address = environ["COMFY_API"]
 client_id = str(uuid.uuid4())
@@ -71,11 +75,13 @@ def get_images(ws, prompt):
     return output_images
 
 
+@tool()
 def generate_images(prompt: str, count: int, size="landscape") -> str:
     cfg = randint(3, 8)
     dims = size_presets.get(size)
     steps = randint(5, 8) * 5
     seed = randint(0, 10000000)
+    logger.debug("Generating %s images at %s with prompt: %s", count, dims, prompt)
 
     prompt_workflow = {
         "3": {
@@ -87,7 +93,7 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
                 "model": ["4", 0],
                 "negative": ["7", 0],
                 "positive": ["6", 0],
-                "sampler_name": "dpm",
+                "sampler_name": "dpmpp_sde",
                 "scheduler": "normal",
                 "seed": seed,
                 "steps": steps,
@@ -131,6 +137,7 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
         },
     }
 
+    print("Connecting to Comfy API at {}".format(server_address))
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, prompt_workflow)
@@ -145,8 +152,17 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
     for j, image in enumerate(results):
         image_path = path.join(get_save_path(), f"output-{j}.png")
         with open(image_path, "wb") as f:
-            f.write(image)
+            image_bytes = io.BytesIO()
+            image.save(image_bytes, format='PNG')
+            f.write(image_bytes.getvalue())
 
         paths.append(image_path)
 
     return paths
+
+
+if __name__ == "__main__":
+    paths = generate_images(
+        "A painting of a beautiful sunset over a calm lake", 3, "landscape"
+    )
+    print(paths)
