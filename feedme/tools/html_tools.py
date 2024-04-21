@@ -29,7 +29,7 @@ def template_post(
         title=title, description=description, images=images, mature=mature
     )
 
-    with open(destination, "w") as f:
-        f.write(result)
+    with open(destination, "wb") as f:
+        f.write(result.encode("utf-8"))
 
     return result
