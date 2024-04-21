@@ -20,6 +20,8 @@ disaster unfold.
     - [Docker](#docker)
   - [Architecture](#architecture)
   - [Datasets](#datasets)
+    - [Generating more interests](#generating-more-interests)
+    - [Images without people](#images-without-people)
 
 ## Requirements
 
@@ -112,6 +114,25 @@ Architecture:
 ![an infographic showing the feedme architecture](./docs/architecture.png)
 
 ## Datasets
+
+### Generating more interests
+
+If you don't have any interests of your own, ChatGPT can generate them for you using the following prompt:
+
+> Come up with 10 different topics that would be interesting social media posts, blog topics, or other content that can
+> be shared with pictures. Provide a single keyword for each topic. Format the list with the keyword first, then the
+> topic. For example:
+>
+> food: You are a talented chef who enjoys cooking at home and taking pictures of beautifully-prepared meals.
+> garden: You are an avid gardener who loves growing plants and documenting their progress with photographs.
+> landscape: You are a landscape photographer, traveling the world to capture exotic vistas.
+
+To fine-tune the output:
+
+> The topics for architecture, fashion, wildlife, travel, art, technology, and music are good. Please write 10 more like
+> that, without duplicating any previous topics.
+
+### Images without people
 
 To discourage people and other characters from appearing in the images, remove the `{characters}` section from the
 `generate_prompts` prompt, like so:
