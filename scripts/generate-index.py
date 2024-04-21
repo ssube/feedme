@@ -11,6 +11,9 @@ def list_posts(root: str):
     children = listdir(root)
     folders = [f for f in children if path.isdir(path.join(root, f))]
 
+    # sort by modification time
+    folders.sort(key=lambda f: path.getmtime(path.join(root, f)), reverse=True)
+
     posts = []
     for folder in folders:
         post_file = path.join(root, folder, "post.json")
@@ -19,6 +22,9 @@ def list_posts(root: str):
 
         with open(post_file, "r") as f:
             post_data = load(f)
+
+        mtime = path.getmtime(path.join(root, folder))
+        timestamp = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M")
 
         title = post_data.get("title", folder)
         images = listdir(path.join(root, folder))
@@ -31,6 +37,7 @@ def list_posts(root: str):
             "folder": folder,
             "title": title,
             "images": images,
+            "timestamp": timestamp,
         }
         posts.append(post)
 
