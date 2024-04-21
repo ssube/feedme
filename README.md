@@ -20,7 +20,7 @@ Runs locally, no cloud services required (or recommended).
 
 VRAM requirements depend on the size of the images and the LLM you select.
 
-- 0GB VRAM minimum, everything can run on CPU
+- 0GB VRAM minimum, everything can run on CPU (64GB main memory recommended).
 - 32GB VRAM recommended for SDXL and Mistral (2x16GB GPUs works well).
 - 64GB VRAM recommended for hires and Mixtral (1x24GB + 1x40GB, for example).
 - 96GB VRAM recommended for Smaug and other Qwen 2-based models (1x16GB + 1x80GB, for example).
