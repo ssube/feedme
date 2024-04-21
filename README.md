@@ -32,8 +32,10 @@ disaster unfold.
 Runs locally, no cloud services required (or recommended).
 
 - Requires Python 3.10 or better.
-- Compatible with Ollama and vLLM for text generation (and other OpenAI-compatible APIs).
-- Compatible with ComfyUI and onnx-web for image generation.
+- Compatible with [Ollama](https://github.com/ollama/ollama) and [vLLM](https://github.com/vllm-project/vllm) for text
+  generation (and other OpenAI-compatible APIs).
+- Compatible with [ComfyUI](https://github.com/comfyanonymous/ComfyUI) and [onnx-web](https://github.com/ssube/onnx-web)
+  for image generation.
 
 VRAM requirements depend on the size of the images and the LLM you select.
 
@@ -83,6 +85,9 @@ python3 -m feedme.multi_post | tee -a /tmp/feedme.log
 - Set `PACKIT_DRIVER=openai` and `OPENAI_API_BASE` to use vLLM for text generation (or other OpenAI-compatible APIs)
 - Set `POST_TOOL=civitai` and `CIVITAI_SESSION` to upload posts to Civitai
 - Set `POST_TOOL=html` to generate HTML pages for each post
+- Set `PACKIT_TRACER=traceloop` and `TRACELOOP_BASE_URL` to enable [Traceloop
+  OpenLLMetry](https://github.com/traceloop/openllmetry) (compatible with self-hosted [Grafana
+  Tempo](https://grafana.com/oss/tempo/))
 
 You can set the `*_API` variables even if they are not being used and switch back and forth with the `*_TOOL`
 variables.
