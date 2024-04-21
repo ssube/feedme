@@ -10,6 +10,17 @@ disaster unfold.
 
 [Here are some posts](https://pub-b43eddfe0133430db1c8911cb46fb03c.r2.dev/index.html) using the included dataset.
 
+## Contents
+
+- [FeedMe](#feedme)
+  - [Contents](#contents)
+  - [Requirements](#requirements)
+  - [Running](#running)
+    - [Configuration](#configuration)
+    - [Docker](#docker)
+  - [Architecture](#architecture)
+  - [Datasets](#datasets)
+
 ## Requirements
 
 Runs locally, no cloud services required (or recommended).
@@ -68,18 +79,20 @@ API token that has permission to download that model.
 
 If you are posting to Civitai, you will need to set `CIVITAI_SESSION` to a session cookie.
 
+Note that the `COMFY_API` variable _must not_ have a protocol, since it uses both HTTP and websockets.
+
 ### Docker
 
 ```shell
 docker run \
     --rm \
     -it \
-    -v ./data:/feedme/feedme/data:ro \
+    -v ./feedme/data:/feedme/feedme/data:ro \
     -v /tmp/feedme-posts:/tmp/feedme-posts:rw \
     -e ROOT_PATH=/tmp/feedme-posts \
     -e IMAGE_TOOL=comfy \
     -e POST_TOOL=html \
-    -e COMFY_API="http://comfyui-server:8188" \
+    -e COMFY_API="comfyui-server:8188" \
     -e OLLAMA_API="http://ollama-server:11434" \
     -e ONNX_API="http://onnx-web-server:5000" \
     -e PACKIT_DRIVER=ollama \
@@ -97,3 +110,24 @@ Agents:
 Architecture:
 
 ![an infographic showing the feedme architecture](./docs/architecture.png)
+
+## Datasets
+
+To discourage people and other characters from appearing in the images, remove the `{characters}` section from the
+`generate_prompts` prompt, like so:
+
+```diff
+--- a/feedme/data/prompts.yaml
++++ b/feedme/data/prompts.yaml
+@@ -93,10 +93,6 @@ generate_prompt: >-
+
+     {example_prompts}
+
+-    The characters are:
+-
+-    {characters}
+-
+     The scene is:
+
+     {scene}
+```
