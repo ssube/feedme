@@ -66,8 +66,15 @@ For each post, one or more of the interests will be randomly selected and agents
 is asked to come up with an idea, and after some debate between them, the best ideas will be turned into social media
 posts. Each post will have a title, description, and some pictures attached.
 
+Run the bot with:
+
+```shell
+python3 -m feedme.multi_post | tee -a /tmp/feedme.log
+```
+
 ### Configuration
 
+- Set `DEBUG` to wait for an interactive debugger to attach before starting
 - Set `FEEDME_ENV` to load a `.env` file
 - Set `FEEDME_DATA` to the dataset folder that you want to use (defaults to [`feedme/data`](./feedme/data/))
 - Set `IMAGE_TOOL=comfy` and `COMFY_API` to use ComfyUI for image generation

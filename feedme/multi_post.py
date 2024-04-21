@@ -101,8 +101,9 @@ def InterestAgent(interest: str, **kwargs):
 
 
 def make_post_paths():
-    makedirs(working_path, exist_ok=True)
-    makedirs(working_path, exist_ok=True)
+    makedirs(approval_path, exist_ok=True)
+    makedirs(approved_path, exist_ok=True)
+    makedirs(rejected_path, exist_ok=True)
     makedirs(working_path, exist_ok=True)
 
 
