@@ -10,3 +10,4 @@ venv/
 
 .coverage
 coverage.xml
+index.html
