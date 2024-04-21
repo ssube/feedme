@@ -8,7 +8,6 @@ RUN pip install --no-cache-dir -r requirements/cpu.txt
 COPY requirements/base.txt /feedme/requirements/base.txt
 RUN pip install --no-cache-dir -r requirements/base.txt
 RUN pip install --no-cache-dir --index-url https://test.pypi.org/simple/ packit_llm==0.1.0
-RUN pip install --no-cache-dir coloredlogs
 
 COPY feedme/ /feedme/feedme/
 
