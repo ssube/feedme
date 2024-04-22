@@ -10,6 +10,8 @@ disaster unfold.
 
 [Here are some posts](https://pub-b43eddfe0133430db1c8911cb46fb03c.r2.dev/index.html) using the included dataset.
 
+Built with [Langchain](https://github.com/langchain-ai/langchain) and [PACkit](https://github.com/ssube/packit).
+
 <img src="https://raw.githubusercontent.com/ssube/feedme/main/docs/banner.png" width="auto" height="480" alt="orange cartoon monster posting on the internet">
 
 ## Contents
