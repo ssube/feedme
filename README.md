@@ -196,9 +196,9 @@ If you don't have any interests of your own, ChatGPT can generate them for you u
 > be shared with pictures. Provide a single keyword for each topic. Format the list with the keyword first, then the
 > topic. For example:
 >
-> food: You are a talented chef who enjoys cooking at home and taking pictures of beautifully-prepared meals.
-> garden: You are an avid gardener who loves growing plants and documenting their progress with photographs.
-> landscape: You are a landscape photographer, traveling the world to capture exotic vistas.
+> - food: You are a talented chef who enjoys cooking at home and taking pictures of beautifully-prepared meals.
+> - garden: You are an avid gardener who loves growing plants and documenting their progress with photographs.
+> - landscape: You are a landscape photographer, traveling the world to capture exotic vistas.
 
 To fine-tune the output:
 
