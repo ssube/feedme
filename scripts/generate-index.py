@@ -4,6 +4,8 @@ from os import listdir, path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from feedme.data import get_bot_name
+
 DEFAULT_TEMPLATE = "index.html.j2"
 
 

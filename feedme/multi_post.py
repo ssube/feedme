@@ -112,12 +112,15 @@ def append_post_notice(body: str, hash: str):
 
 def do_images(prompt, count, size, tool=image_tool):
     if tool == "comfy":
-        return generate_images(prompt, count, size=size)
+        results = generate_images(prompt, count, size=size)
     elif tool == "onnx":
-        return generate_image_tool(prompt, count, size=size)
+        results = generate_image_tool(prompt, count, size=size)
     else:
         logger.error("unknown image tool: %s", tool)
         return []
+
+    results = [image for image in results if not image.startswith("Error")]
+    return results
 
 
 def do_post(post_slug, post_description, post_hash, post, tool=post_tool):

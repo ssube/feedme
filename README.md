@@ -12,7 +12,7 @@ disaster unfold.
 
 Built with [Langchain](https://github.com/langchain-ai/langchain) and [PACkit](https://github.com/ssube/packit).
 
-<img src="https://raw.githubusercontent.com/ssube/feedme/main/docs/banner.png" width="auto" height="480" alt="orange cartoon monster posting on the internet">
+<img src="https://raw.githubusercontent.com/ssube/feedme/main/docs/banner.png" height="480" alt="orange cartoon monster posting on the internet">
 
 ## Contents
 

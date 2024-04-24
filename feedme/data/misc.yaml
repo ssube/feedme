@@ -35,10 +35,10 @@ llms:
     manager_temperature: 0.10
 
 sizes: {
-  landscape: [1280, 960],
-  portrait: [960, 1280],
-  square: [1024, 1024],
+    landscape: [960, 1280],
+    portrait: [1280, 960],
+    square: [1024, 1024],
 }
 
 bot:
-    name: "FeedMe"
+    name: "FeedMe - Demo"
