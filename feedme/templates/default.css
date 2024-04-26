@@ -35,6 +35,10 @@ body {
     align-items: center; /* Align items vertically in the center */
 }
 
+.post-header p {
+    white-space: pre-line;
+}
+
 .back-button {
     margin-right: 20px; /* Space between the back button and the title */
     background-color: #007bff; /* Bootstrap primary blue for buttons */

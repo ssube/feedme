@@ -50,7 +50,7 @@ def list_posts(root: str):
     return posts
 
 
-def template_page(title, posts, template=None):
+def template_page(title, posts, template=None, **kwargs):
     if template is None:
         template = DEFAULT_TEMPLATE
 
@@ -59,7 +59,7 @@ def template_page(title, posts, template=None):
         autoescape=select_autoescape(["html", "xml"]),
     )
     template = env.get_template(template)
-    result = template.render(title=title, posts=posts)
+    result = template.render(title=title, posts=posts, **kwargs)
 
     return result
 

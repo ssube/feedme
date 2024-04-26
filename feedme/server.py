@@ -10,7 +10,7 @@ from flask import Flask, jsonify, request, send_file
 from packit.tracing import set_tracer
 from packit.tracing.traceloop import dumper
 
-from feedme.data import get_bot_name
+from feedme.data import get_bot_name, special_interests
 from feedme.index_page import list_posts, template_page
 from feedme.multi_post import main, root_path
 from feedme.progress_tracer import make_tracer
@@ -36,7 +36,7 @@ def posts():
 
 @app.route("/create", methods=["GET"])
 def create():
-    return template_page(get_bot_name(), {}, CREATE_TEMPLATE)
+    return template_page(get_bot_name(), [], CREATE_TEMPLATE, interests=special_interests)
 
 
 @app.route("/<string:post_id>", methods=["GET"])
@@ -89,6 +89,7 @@ def post_create():
     logger.info(data)
 
     interests = data["interests"]
+    min_interests = len(interests)
     max_interests = min(len(interests), 5)
 
     # set up the progress tracer
@@ -114,7 +115,10 @@ def post_create():
         set_tracer(tracer)
 
         posts = main(
-            interests=interests, concept_count=1, max_interest_count=max_interests
+            interests=interests,
+            concept_count=1,
+            max_interest_count=max_interests,
+            min_interest_count=min_interests,
         )
         logger.info(posts)
 
@@ -140,6 +144,7 @@ def css():
 def after_request(response):
     timestamp = strftime("[%Y-%b-%d %H:%M]")
     logger.debug(
+        "%s %s - %s %s %s - %s",
         timestamp,
         request.remote_addr,
         request.method,

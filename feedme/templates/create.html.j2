@@ -103,7 +103,11 @@ function createPost() {
       <label for="interests">Interests</label>
       <input type="text" id="interests" name="interests" placeholder="Enter comma-delimited interests">
       <button class="create-button" onclick="createPost();">Create</button>
-      <p><!-- pad out row --></p>
+      <ul class="post-updates">
+        {% for interest in interests %}
+          <li>{{ interest }}</li>
+        {% endfor %}
+      </ul>
       <ol id="updates" class="post-updates"></ol>
     </div>
   </div>
