@@ -31,24 +31,44 @@ body {
     font-weight: bold;
     color: #003366; /* Dark blue that complements the navy blue background */
     box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle drop shadow for the header */
+    display: flex;
+    align-items: center; /* Align items vertically in the center */
 }
 
-.post-header p {
-    white-space: pre-line;
+.back-button {
+    margin-right: 20px; /* Space between the back button and the title */
+    background-color: #007bff; /* Bootstrap primary blue for buttons */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.back-button:hover {
+    background-color: #0056b3; /* Darken the button color on hover */
+}
+
+.header-title {
+    flex-grow: 1; /* Ensures the title takes up the remaining space */
 }
 
 .post-content {
-    height: 800px;
+    min-height: 800px;
     padding: 15px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(512px, 1fr)); /* Responsive grid layout */
+    grid-template-columns: repeat(4, 1fr); /* Set grid to have 4 columns */
+    /* grid-template-columns: repeat(auto-fill, minmax(512px, 1fr)); /* Responsive grid layout */
     gap: 10px; /* Space between images */
     overflow: auto;
 }
 
 .post-content img {
-    width: 100%; /* Make images expand to fill the grid area */
-    height: 100%;
+    width: auto; /* Auto width to maintain aspect ratio */
+    max-width: 100%; /* Ensure images do not overflow their container */
+    min-width: 512px; /* Minimum width of images */
+    height: auto; /* Auto height to maintain aspect ratio */
     border-radius: 4px; /* Optional: round corners for images */
 }
 
@@ -72,4 +92,9 @@ body {
 
 .post-actions button:hover {
     background-color: #0056b3; /* Darken the button color on hover */
+}
+
+.post-updates {
+    grid-column: 2 / 4;
+    color: black;
 }

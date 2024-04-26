@@ -9,14 +9,15 @@
 <body>
   <div class="post">
     <div class="post-header">
-      <div class="post-info">
-        <h1>{{ title }}</h1>
-        <p>{{ description }}</p>
+      <button class="back-button">Back</button>
+      <div class="header-content">
+        <h1 class="header-title">{{ title }}</h1>
+        <p class="header-description">{{ description }}</p>
       </div>
     </div>
     <div class="post-content">
       {% for image in images %}
-        <img src="{{ image }}" alt="Post Image">
+      <img src="{{ image }}" alt="Post Image">
       {% endfor %}
     </div>
     <div class="post-actions">
