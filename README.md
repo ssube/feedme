@@ -8,7 +8,10 @@ descriptions, and even gallery web pages. Sit back and watch as the adventurous 
 the world and discover fascinating new places, or make them all creepy relatives selling Tupperware and watch the
 disaster unfold.
 
-[Here are some posts](https://pub-b43eddfe0133430db1c8911cb46fb03c.r2.dev/index.html) using the included dataset.
+Example posts:
+
+- [example dataset](https://examples.perpetualvoid.ai/index.html)
+- [liminal spaces dataset](https://liminal.perpetualvoid.ai/index.html)
 
 Built with [Langchain](https://github.com/langchain-ai/langchain) and [PACkit](https://github.com/ssube/packit).
 

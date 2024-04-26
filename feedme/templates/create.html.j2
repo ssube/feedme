@@ -4,6 +4,7 @@
     <title>Create Post</title>
     <link rel="stylesheet" href="../default.css">
     <script>
+// stream parsing from https://www.loginradius.com/blog/engineering/guest-post/http-streaming-with-nodejs-and-fetch-api/
 async function *parseJsonStream(readableStream) {
     for await (const line of readLines(readableStream.getReader())) {
         const trimmedLine = line.trim().replace(/,$/, '');
