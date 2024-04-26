@@ -23,13 +23,15 @@ Built with [Langchain](https://github.com/langchain-ai/langchain) and [PACkit](h
     - [Configuration](#configuration)
     - [Docker](#docker)
   - [Architecture](#architecture)
-  - [Datasets](#datasets)
+  - [Customizing](#customizing)
     - [Compatible models](#compatible-models)
       - [Compatible GPT2s](#compatible-gpt2s)
       - [Compatible LLMs](#compatible-llms)
       - [Compatible SD checkpoints](#compatible-sd-checkpoints)
-    - [Generating more interests](#generating-more-interests)
-    - [Images without people](#images-without-people)
+    - [Interests](#interests)
+      - [Generating more interests](#generating-more-interests)
+    - [Prompts](#prompts)
+      - [Images without people](#images-without-people)
 
 ## Requirements
 
@@ -133,7 +135,7 @@ Architecture:
 
 ![an infographic showing the feedme architecture](./docs/architecture.png)
 
-## Datasets
+## Customizing
 
 ### Compatible models
 
@@ -190,7 +192,12 @@ For SDXL:
 
 LoRAs and other networks are not supported yet.
 
-### Generating more interests
+### Interests
+
+The `interests` are what drive the content creation in feedme. A scientist agent is created to represent each of the
+interests, and a randomly-selected group of scientists are used to generate and rate each post.
+
+#### Generating more interests
 
 If you don't have any interests of your own, ChatGPT can generate them for you using the following prompt:
 
@@ -207,7 +214,9 @@ To fine-tune the output:
 > The topics for architecture, fashion, wildlife, travel, art, technology, and music are good. Please write 10 more like
 > that, without duplicating any previous topics.
 
-### Images without people
+### Prompts
+
+#### Images without people
 
 To discourage people and other characters from appearing in the images, remove the `{characters}` section from the
 `generate_prompts` prompt, like so:
