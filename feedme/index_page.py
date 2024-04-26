@@ -1,6 +1,6 @@
 from datetime import datetime
 from json import load
-from os import listdir, path
+from os import environ, listdir, path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -10,6 +10,7 @@ DEFAULT_TEMPLATE = "index.html.j2"
 
 
 def list_posts(root: str):
+    print(f"Listing posts in {root}")
     children = listdir(root)
     folders = [f for f in children if path.isdir(path.join(root, f))]
 
@@ -57,15 +58,26 @@ def template_page(title, posts, template=None):
     template = env.get_template(template)
     result = template.render(title=title, posts=posts)
 
-    with open("index.html", "w") as f:
-        f.write(result)
-
     return result
 
 
 def main():
-    posts = list_posts("/tmp/feedme/approved")
-    template_page("FeedMe", posts)
+    root_path = environ.get("ROOT_PATH", "/tmp/feedme-posts")
+    print(f"Generating index for {root_path}")
+    posts = list_posts(root_path)
+    page = template_page(get_bot_name(), posts)
+
+    with open(path.join(root_path, "index.html"), "w") as f:
+        f.write(page)
+
+    # copy the CSS file
+    with open("feedme/templates/default.css", "r") as f:
+        css = f.read()
+
+    with open(path.join(root_path, "default.css"), "w") as f:
+        f.write(css)
+
+    print("Index generated with %d posts" % len(posts))
 
 
 if __name__ == "__main__":

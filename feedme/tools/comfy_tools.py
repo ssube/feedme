@@ -6,13 +6,13 @@ import json
 import urllib.parse
 import urllib.request
 import uuid
+from logging import getLogger
 from os import environ, path
 from random import choice, randint
 
 import websocket  # NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
 from PIL import Image
 from traceloop.sdk.decorators import tool
-from logging import getLogger
 
 from feedme.data import checkpoint_models, get_save_path, prompts, size_presets
 
@@ -153,7 +153,7 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
         image_path = path.join(get_save_path(), f"output-{j}.png")
         with open(image_path, "wb") as f:
             image_bytes = io.BytesIO()
-            image.save(image_bytes, format='PNG')
+            image.save(image_bytes, format="PNG")
             f.write(image_bytes.getvalue())
 
         paths.append(image_path)
