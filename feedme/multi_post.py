@@ -8,9 +8,8 @@ from time import monotonic
 from packit.agent import Agent, agent_easy_connect
 from packit.groups import Panel
 from packit.results import int_result
-from packit.tracing import set_tracer, trace
+from packit.tracing import trace
 from packit.utils import logger_with_colors
-from traceloop.sdk import Traceloop
 from traceloop.sdk.decorators import task
 
 from feedme.data import (
@@ -77,8 +76,10 @@ creative_llm = agent_easy_connect(
 )
 
 
-def random_interest(k=6):
-    interests = list(special_interests.keys())
+def random_interest(k=6, interests=None):
+    if interests is None:
+        interests = list(special_interests.keys())
+
     return sample(interests, k=k)
 
 
@@ -497,17 +498,20 @@ def image_critique_group_scale(critics, context):
 
 
 def summarize(post_ratings, post_times, approved_posts, rejected_posts):
+    num_approved = len(approved_posts)
+    num_rejected = len(rejected_posts)
+
     average_post_rating = sum(post_ratings) / len(post_ratings) if post_ratings else 0
     average_post_time = sum(post_times) / len(post_times) if post_times else 0
     approval_rate = (
-        approved_posts / (approved_posts + rejected_posts)
-        if approved_posts + rejected_posts > 0
+        num_approved / (num_approved + num_rejected)
+        if num_approved + num_rejected > 0
         else 0
     )
     logger.info(
         "approved posts: %s, rejected posts: %s, approval rate: %.2f",
-        approved_posts,
-        rejected_posts,
+        num_approved,
+        num_rejected,
         approval_rate,
     )
     logger.info(
@@ -574,25 +578,26 @@ def generate_description(interests, social_media_manager, ideas):
 def main(
     approval_threshold=0.65,  # TODO: move to data
     concept_count=20,  # TODO: move to data
-    fixed_post_format=None,
     max_post_retry=3,
     min_image_count=3,  # TODO: move to data
     max_image_count=5,  # TODO: move to data
     min_interest_count=2,  # TODO: move to data
     max_interest_count=5,  # TODO: move to data
+    interests=None,
+    post_format=None,
 ):
     post_ratings = []
     post_times = []
-    approved_posts = 0
-    rejected_posts = 0
+    approved_posts = []
+    rejected_posts = []
 
     for _ in range(concept_count):
-        if fixed_post_format is None:
+        if post_format is None:
             post_format = choice(post_formats)
-        else:
-            post_format = fixed_post_format
 
-        interests = random_interest(randint(min_interest_count, max_interest_count))
+        interests = random_interest(
+            randint(min_interest_count, max_interest_count), interests=interests
+        )
         interest_agents = {interest: InterestAgent(interest) for interest in interests}
 
         with trace(post_format, "feedme.post") as (report_args, report_output):
@@ -725,7 +730,7 @@ def main(
                                 len(top_images),
                                 count,
                             )
-                            rejected_posts += 1
+                            rejected_posts.append(1)
                             post_retry += 1
                             report_output_retry(
                                 {"status": "failed", "reason": "not enough images"}
@@ -770,7 +775,7 @@ def main(
                         if average_rating < approval_threshold:
                             logger.error("rejecting post: %s", post_path)
                             move(post_path, rejected_path)
-                            rejected_posts += 1
+                            rejected_posts.append(1)
                             post_retry += 1
                             report_output_retry(
                                 {
@@ -782,7 +787,7 @@ def main(
 
                         logger.warning("approving post: %s", post_path)
                         move(post_path, approved_path)
-                        approved_posts += 1
+                        approved_posts.append(path.join(approved_path, post_slug))
 
                         # post to Civitai or save to HTML
                         do_post(post_slug, post_description, post_hash, post)
@@ -813,9 +818,11 @@ def main(
                             }
                         )
 
-            report_output({"status": "failed", "reason": "max retries exceeded"})
+            if post_retry >= max_post_retry:
+                report_output({"status": "failed", "reason": "max retries exceeded"})
 
     summarize(post_ratings, post_times, approved_posts, rejected_posts)
+    return approved_posts
 
 
 if __name__ == "__main__":
