@@ -36,7 +36,9 @@ def posts():
 
 @app.route("/create", methods=["GET"])
 def create():
-    return template_page(get_bot_name(), [], CREATE_TEMPLATE, interests=special_interests)
+    return template_page(
+        get_bot_name(), [], CREATE_TEMPLATE, interests=special_interests
+    )
 
 
 @app.route("/<string:post_id>", methods=["GET"])

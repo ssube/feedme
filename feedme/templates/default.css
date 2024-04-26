@@ -66,6 +66,7 @@ body {
     /* grid-template-columns: repeat(auto-fill, minmax(512px, 1fr)); /* Responsive grid layout */
     gap: 10px; /* Space between images */
     overflow: auto;
+    color: black;
 }
 
 .post-content img {
@@ -100,5 +101,4 @@ body {
 
 .post-updates {
     grid-column: 2 / 4;
-    color: black;
 }

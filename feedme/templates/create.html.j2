@@ -48,10 +48,12 @@ function readChunks(reader) {
 
 function formatUpdate(update) {
   if (update["args"] && update["kwargs"]) {
-    return `Step parameters: ${JSON.stringify(update)}`;
+    return `Step parameters:
+${JSON.stringify(update["args"])}
+${JSON.stringify(update["kwargs"])}`;
   }
   if (update["result"]) {
-    return `Step output: ${JSON.stringify(update)}`;
+    return `Step output: ${JSON.stringify(update["result"])}`;
   }
   if (update["span"]) {
     return `Starting step: ${update["span"]}`;
@@ -69,7 +71,7 @@ function createPost() {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          "interests": interests,
+            "interests": interests,
         }),
     })
       .then(async (response) => {
@@ -81,11 +83,19 @@ function createPost() {
 
               // add to page
               const item = document.createElement('li');
-              item.appendChild(document.createTextNode(formatUpdate(update)));
+              if (update["done"]) {
+                const link = document.createElement('a');
+                link.href = update["result"];
+                link.textContent = "View post";
+                item.appendChild(link);
+              } else {
+                const code = document.createElement('pre');
+                code.textContent = formatUpdate(update);
+                item.appendChild(code);
+              }
               list.appendChild(item);
           }
           console.log(`Received ${updateCount} updates`);
-          // TODO: add the post link
       });
 }
     </script>
@@ -94,7 +104,7 @@ function createPost() {
 <body>
   <div class="post">
     <div class="post-header">
-      <button class="back-button">Back</button>
+      <a class="back-button" href="/">Home</a>
       <div class="header-content">
         <h1 class="header-title">Create Post</h1>
         <p class="header-description">Create a new post</p>
