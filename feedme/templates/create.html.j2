@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Post</title>
+    <link rel="stylesheet" href="../default.css">
+    <script>
+async function *parseJsonStream(readableStream) {
+    for await (const line of readLines(readableStream.getReader())) {
+        const trimmedLine = line.trim().replace(/,$/, '');
+
+        if (trimmedLine !== '[' && trimmedLine !== ']' && trimmedLine.length > 0) {
+            console.log(trimmedLine);
+            yield JSON.parse(trimmedLine);
+        }
+    }
+}
+
+async function *readLines(reader) {
+    const textDecoder = new TextDecoder();
+    let partOfLine = '';
+    for await (const chunk of readChunks(reader)) {
+        const chunkText = textDecoder.decode(chunk);
+        const chunkLines = chunkText.split('\n');
+        if (chunkLines.length === 1) {
+            partOfLine += chunkLines[0];
+        } else if (chunkLines.length > 1) {
+            yield partOfLine + chunkLines[0];
+            for (let i=1; i < chunkLines.length - 1; i++) {
+                yield chunkLines[i];
+            }
+            partOfLine = chunkLines[chunkLines.length - 1];
+        }
+    }
+}
+
+function readChunks(reader) {
+    return {
+        async* [Symbol.asyncIterator]() {
+            let readResult = await reader.read();
+            while (!readResult.done) {
+                yield readResult.value;
+                readResult = await reader.read();
+            }
+        },
+    };
+}
+
+function formatUpdate(update) {
+  if (update["args"] && update["kwargs"]) {
+    return `Step parameters: ${JSON.stringify(update)}`;
+  }
+  if (update["result"]) {
+    return `Step output: ${JSON.stringify(update)}`;
+  }
+  if (update["span"]) {
+    return `Starting step: ${update["span"]}`;
+  }
+  return `Unknown update: ${JSON.stringify(update)}`;
+}
+
+function createPost() {
+    const interests = document.getElementById('interests').value.split(',').map(interest => interest.trim());
+    console.log("Creating post with interests:", interests);
+    fetch('/post', {
+        method: "POST",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "interests": interests,
+        }),
+    })
+      .then(async (response) => {
+          const list = document.getElementById('updates');
+          let updateCount = 0;
+          for await (const update of parseJsonStream(response.body)) {
+              console.log(update);
+              updateCount++;
+
+              // add to page
+              const item = document.createElement('li');
+              item.appendChild(document.createTextNode(formatUpdate(update)));
+              list.appendChild(item);
+          }
+          console.log(`Received ${updateCount} updates`);
+          // TODO: add the post link
+      });
+}
+    </script>
+</head>
+
+<body>
+  <div class="post">
+    <div class="post-header">
+      <button class="back-button">Back</button>
+      <div class="header-content">
+        <h1 class="header-title">Create Post</h1>
+        <p class="header-description">Create a new post</p>
+      </div>
+    </div>
+    <div class="post-content">
+      <label for="interests">Interests</label>
+      <input type="text" id="interests" name="interests" placeholder="Enter comma-delimited interests">
+      <button class="create-button" onclick="createPost();">Create</button>
+      <p><!-- pad out row --></p>
+      <ol id="updates" class="post-updates"></ol>
+    </div>
+  </div>
+</body>
+</html>
