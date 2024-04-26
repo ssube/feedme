@@ -8,7 +8,7 @@ descriptions, and even gallery web pages. Sit back and watch as the adventurous 
 the world and discover fascinating new places, or make them all creepy relatives selling Tupperware and watch the
 disaster unfold.
 
-Example posts:
+Sample feeds:
 
 - [example dataset](https://examples.perpetualvoid.ai/index.html)
 - [liminal spaces dataset](https://liminal.perpetualvoid.ai/index.html)
