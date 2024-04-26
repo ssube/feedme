@@ -1,16 +1,19 @@
 from datetime import datetime
 from json import load
+from logging import getLogger
 from os import environ, listdir, path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from feedme.data import get_bot_name
 
+logger = getLogger(__name__)
+
 DEFAULT_TEMPLATE = "index.html.j2"
 
 
 def list_posts(root: str):
-    print(f"Listing posts in {root}")
+    logger.debug(f"Listing posts in {root}")
     children = listdir(root)
     folders = [f for f in children if path.isdir(path.join(root, f))]
 
@@ -63,7 +66,7 @@ def template_page(title, posts, template=None):
 
 def main():
     root_path = environ.get("ROOT_PATH", "/tmp/feedme-posts")
-    print(f"Generating index for {root_path}")
+    logger.info(f"Generating index for {root_path}")
     posts = list_posts(root_path)
     page = template_page(get_bot_name(), posts)
 
@@ -77,7 +80,7 @@ def main():
     with open(path.join(root_path, "default.css"), "w") as f:
         f.write(css)
 
-    print("Index generated with %d posts" % len(posts))
+    logger.info("Index generated with %d posts" % len(posts))
 
 
 if __name__ == "__main__":

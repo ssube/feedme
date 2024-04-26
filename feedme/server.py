@@ -1,5 +1,6 @@
 from datetime import datetime
 from json import dumps, load
+from logging import getLogger
 from os import listdir, path
 from queue import Queue
 from threading import Thread
@@ -13,6 +14,8 @@ from feedme.data import get_bot_name
 from feedme.index_page import list_posts, template_page
 from feedme.multi_post import main, root_path
 from feedme.progress_tracer import make_tracer
+
+logger = getLogger(__name__)
 
 CREATE_TEMPLATE = "create.html.j2"
 INDEX_TEMPLATE = "index.html.j2"
@@ -83,7 +86,7 @@ def post_html(post_id, subpath):
 @app.route("/post", methods=["POST"])
 def post_create():
     data = request.json
-    print(data)
+    logger.info(data)
 
     interests = data["interests"]
     max_interests = min(len(interests), 5)
@@ -92,7 +95,7 @@ def post_create():
     progress = Queue()
 
     def callback(**kwargs):
-        print(kwargs)
+        logger.debug(kwargs)
         progress.put(kwargs)
 
     def generate():
@@ -103,7 +106,7 @@ def post_create():
                 if "done" in update and update["done"]:
                     break
             except Exception as err:
-                print(err)
+                logger.exception(err)
                 break
 
     def run():
@@ -113,7 +116,7 @@ def post_create():
         posts = main(
             interests=interests, concept_count=1, max_interest_count=max_interests
         )
-        print(posts)
+        logger.info(posts)
 
         callback(done=True, result=posts)
 
@@ -136,7 +139,7 @@ def css():
 @app.after_request
 def after_request(response):
     timestamp = strftime("[%Y-%b-%d %H:%M]")
-    print(
+    logger.debug(
         timestamp,
         request.remote_addr,
         request.method,
@@ -148,6 +151,6 @@ def after_request(response):
 
 
 if __name__ == "__main__":
-    print("Please run this server using `waitress-serve`")
-    print("Example: `waitress-serve --call 'feedme.server:app'`")
+    logger.warning("Please run this server using `waitress-serve`")
+    logger.warning("Example: `waitress-serve --call 'feedme.server:app'`")
     app.run()
