@@ -11,6 +11,7 @@ disaster unfold.
 Sample feeds:
 
 - [example dataset](https://examples.perpetualvoid.ai/index.html)
+- [landscape dataset](https://landscape.perpetualvoid.ai/index.html)
 - [liminal spaces dataset](https://liminal.perpetualvoid.ai/index.html)
 
 Built with [Langchain](https://github.com/langchain-ai/langchain) and [PACkit](https://github.com/ssube/packit).

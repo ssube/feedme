@@ -92,7 +92,7 @@ def post_create():
 
     interests = data["interests"]
     min_interests = len(interests)
-    max_interests = min(len(interests), 5)
+    max_interests = len(interests)
 
     # set up the progress tracer
     progress = Queue()
@@ -117,10 +117,10 @@ def post_create():
         set_tracer(tracer)
 
         posts = main(
-            interests=interests,
             concept_count=1,
             max_interest_count=max_interests,
             min_interest_count=min_interests,
+            post_interests=interests,
         )
         logger.info(posts)
 

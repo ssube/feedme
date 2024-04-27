@@ -102,3 +102,7 @@ body {
 .post-updates {
     grid-column: 2 / 4;
 }
+
+.post-updates pre {
+    white-space: normal;
+}

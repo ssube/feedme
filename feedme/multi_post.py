@@ -583,7 +583,7 @@ def main(
     max_image_count=5,  # TODO: move to data
     min_interest_count=2,  # TODO: move to data
     max_interest_count=5,  # TODO: move to data
-    interests=None,
+    post_interests=None,
     post_format=None,
 ):
     post_ratings = []
@@ -596,7 +596,7 @@ def main(
             post_format = choice(post_formats)
 
         interests = random_interest(
-            randint(min_interest_count, max_interest_count), interests=interests
+            randint(min_interest_count, max_interest_count), interests=post_interests
         )
         interest_agents = {interest: InterestAgent(interest) for interest in interests}
 
