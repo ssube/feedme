@@ -8,6 +8,10 @@ descriptions, and even gallery web pages. Sit back and watch as the adventurous 
 the world and discover fascinating new places, or make them all creepy relatives selling Tupperware and watch the
 disaster unfold.
 
+This project started as a joke. The initial goal was to find out whether a completely automated process could produce
+coherent social media posts. The results were better than expected, especially in topical similarity between the text
+and images, so I cleaned up the code to share and I am working on writing up the prompt generation process.
+
 Sample feeds:
 
 - [example dataset](https://examples.perpetualvoid.ai/index.html)
