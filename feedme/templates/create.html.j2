@@ -88,8 +88,8 @@ function createPost() {
                 const postName = postPath.split('/').pop();
 
                 const link = document.createElement('a');
-                link.href = postName;
-                link.textContent = "View post";
+                link.href = `/${postName}`;
+                link.textContent = `View post: ${postName}`;
                 item.appendChild(link);
               } else {
                 const code = document.createElement('pre');
