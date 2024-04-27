@@ -18,7 +18,7 @@ def generate_text(model_path, prompt, max_length, top_k=50, top_p=0.95):
     final_outputs = model.generate(
         ids,
         do_sample=True,
-        max_length=max_length,
+        max_new_tokens=max_length,
         pad_token_id=model.config.eos_token_id,
         top_k=top_k,
         top_p=top_p,
