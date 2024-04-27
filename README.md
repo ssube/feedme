@@ -1,12 +1,12 @@
 # FeedMe
 
 Generate your own personalized social media feed at home! Decide what you want to see and how much, or just let it run
-in a loop and see what happens. The algorithm is yours, this is your feed, and you decide what you want to see.
+in a loop and see what happens. The algorithm is yours, this is your feed, and you decide what you want to see. Runs
+against your local image gen and LLM servers, no cloud services required.
 
-Enter a few topics or ideas, pick the right format, and make your own custom image feed complete with post titles,
-descriptions, and even gallery web pages. Sit back and watch as the adventurous agents in the default dataset explore
-the world and discover fascinating new places, or make them all creepy relatives selling Tupperware and watch the
-disaster unfold.
+Enter a few topics or ideas and make your own custom image feed complete with post titles, descriptions, and even
+gallery web pages. Sit back and watch as the adventurous agents in the default dataset explore the world and discover
+fascinating new places, or make them all creepy relatives selling Tupperware and watch the disaster unfold.
 
 Sample feeds:
 
