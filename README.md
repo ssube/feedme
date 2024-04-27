@@ -8,10 +8,6 @@ descriptions, and even gallery web pages. Sit back and watch as the adventurous 
 the world and discover fascinating new places, or make them all creepy relatives selling Tupperware and watch the
 disaster unfold.
 
-This project started as a joke. The initial goal was to find out whether a completely automated process could produce
-coherent social media posts. The results were better than expected, especially in topical similarity between the text
-and images, so I cleaned up the code to share and I am working on writing up the prompt generation process.
-
 Sample feeds:
 
 - [example dataset](https://examples.perpetualvoid.ai/index.html)
@@ -19,6 +15,10 @@ Sample feeds:
 - [liminal spaces dataset](https://liminal.perpetualvoid.ai/index.html)
 
 Built with [Langchain](https://github.com/langchain-ai/langchain) and [PACkit](https://github.com/ssube/packit).
+
+This project started as a joke. The initial goal was to find out whether a completely automated process could produce
+coherent social media posts. The results were better than expected, especially in topical similarity between the text
+and images, so I cleaned up the code to share and I am working on writing up the prompt generation process.
 
 <img src="https://raw.githubusercontent.com/ssube/feedme/main/docs/banner.png" height="480" alt="orange cartoon monster posting on the internet">
 
