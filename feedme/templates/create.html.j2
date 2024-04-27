@@ -84,8 +84,11 @@ function createPost() {
               // add to page
               const item = document.createElement('li');
               if (update["done"]) {
+                const postPath = update["result"]; // needs to use the folder basename
+                const postName = postPath.split('/').pop();
+
                 const link = document.createElement('a');
-                link.href = update["result"];
+                link.href = postName;
                 link.textContent = "View post";
                 item.appendChild(link);
               } else {
