@@ -86,8 +86,12 @@ def random_interest(k=6, interests=None):
     Get k random interests from the grouped interests, one from each category.
     """
 
-    # select k random categories
     keys = interests or list(grouped_interests.keys())
+
+    # make sure k is valid
+    k = min(k, len(keys))
+
+    # select k random categories
     categories = sample(keys, k)
 
     # select one interest from each category
