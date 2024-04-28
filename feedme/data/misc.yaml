@@ -24,8 +24,6 @@ onnx:
     remove: "(art by ,|greg rutkowski|artgerm|artstation|deviantart| and |trending| on |Greg Rutkowski|Alphonse Mucha|featured in )"
     retries: 20
     poll: 15
-    batch: 1
-    extra: 3
 
 llms:
     gpt2: Civitai/promptgen-sfw-250k
@@ -44,10 +42,19 @@ bot:
     name: "FeedMe - Demo"
 
 images:
-    min: 3
-    max: 5
     batch: 1
+    cfg:
+        increment: 0.5
+        min: 3.0
+        max: 6.0
+    count:
+        min: 4
+        max: 6
     extra: 2
+    steps:
+        increment: 5
+        min: 25
+        max: 40
 
 interests:
     min: 2

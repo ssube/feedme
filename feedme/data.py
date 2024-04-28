@@ -9,31 +9,37 @@ from feedme.models.keywords import KeywordsModel
 from feedme.models.misc import MiscData
 from feedme.models.prompts import PromptsModel
 
-load_dotenv(environ.get("FEEDME_ENV", ".env"), override=True)
+data_files = {
+    AgentsModel: "agents.yaml",
+    KeywordsModel: "keywords.yaml",
+    MiscData: "misc.yaml",
+    PromptsModel: "prompts.yaml",
+}
 
-data_base = environ.get("FEEDME_DATA", "feedme/data")
 
-with open(path.join(data_base, "agents.yaml"), "r") as f:
-    agent_data = load(f, Loader)
+def load_data(data_base: str):
+    data = {}
+    for model, file in data_files.items():
+        with open(path.join(data_base, file), "r") as f:
+            model_data = load(f, Loader)
+            data[model] = model(**model_data)
 
-with open(path.join(data_base, "keywords.yaml"), "r") as f:
-    keyword_data = load(f, Loader)
+    return data
 
-with open(path.join(data_base, "misc.yaml"), "r") as f:
-    misc_data = load(f, Loader)
-
-with open(path.join(data_base, "prompts.yaml"), "r") as f:
-    prompt_data = load(f, Loader)
 
 # load and validate
-agents = AgentsModel(**agent_data)
-keywords = KeywordsModel(**keyword_data)
-misc = MiscData(**misc_data)
-prompts = PromptsModel(**prompt_data)
+load_dotenv(environ.get("FEEDME_ENV", ".env"), override=True)
+data_base = environ.get("FEEDME_DATA", "feedme/data")
+dataset = load_data(data_base=data_base)
+
+agents: AgentsModel = dataset[AgentsModel]
+keywords: KeywordsModel = dataset[KeywordsModel]
+misc: MiscData = dataset[MiscData]
+prompts: PromptsModel = dataset[PromptsModel]
 
 
-# TODO: get rid of this, move to data or env
-save_path = "/tmp"
+# prep output
+save_path = environ.get("FEEDME_DEST", "/tmp/feedme-posts")
 
 
 def get_save_path() -> str:
@@ -78,7 +84,7 @@ def group_interests():
     return grouped_interests
 
 
-def random_interest(k=6, interests=None):
+def get_random_interest(k=6, interests=None):
     """
     Get k random interests from the grouped interests, one from each category.
     """

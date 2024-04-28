@@ -1,8 +1,9 @@
 from typing import List
 
-from pydantic import BaseModel
+from feedme.models.base import dataclass
 
 
-class KeywordsModel(BaseModel):
+@dataclass
+class KeywordsModel:
     quality: List[str]
     remove: List[str]

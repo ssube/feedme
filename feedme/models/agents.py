@@ -1,13 +1,15 @@
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel
+from feedme.models.base import dataclass
 
 
-class InterestModel(BaseModel):
+@dataclass
+class InterestModel:
     backstory: Union[str, List[str]]
     category: Optional[str]
 
 
-class AgentsModel(BaseModel):
+@dataclass
+class AgentsModel:
     backstory: Dict[str, str]
     interests: Dict[str, Union[str, InterestModel]]

@@ -15,9 +15,10 @@ from traceloop.sdk.decorators import task
 from feedme.data import (
     agents,
     get_interest_story,
+    get_random_interest,
+    get_save_path,
     misc,
     prompts,
-    random_interest,
     set_save_path,
 )
 from feedme.tools.civitai_tools import close_page, create_post, launch_login
@@ -56,7 +57,7 @@ post_tool = environ.get("POST_TOOL", "html")
 
 
 # set up paths
-root_path = environ["ROOT_PATH"]
+root_path = get_save_path()  # this is initialized to the dest path
 approval_path = path.join(root_path, "approval")
 approved_path = path.join(root_path, "approved")
 rejected_path = path.join(root_path, "rejected")
@@ -65,12 +66,12 @@ working_path = path.join(root_path, "working")
 
 # configure LLMs
 manager_llm = agent_easy_connect(
-    model=misc.llms.manager,
-    temperature=misc.llms.manager_temperature,
+    model=misc.llms.manager.model,
+    temperature=misc.llms.manager.temperature,
 )
 creative_llm = agent_easy_connect(
-    model=misc.llms.creative,
-    temperature=misc.llms.creative_temperature,
+    model=misc.llms.creative.model,
+    temperature=misc.llms.creative.temperature,
 )
 
 
@@ -575,8 +576,8 @@ def main(
     approval_threshold=misc.ranking.post.threshold,
     concept_count=misc.posts.count,
     max_post_retry=misc.posts.retry,
-    min_image_count=misc.images.min,
-    max_image_count=misc.images.max,
+    min_image_count=misc.images.count.min,
+    max_image_count=misc.images.count.max,
     min_interest_count=misc.interests.min,
     max_interest_count=misc.interests.max,
     post_interests=None,
@@ -591,7 +592,7 @@ def main(
         if post_format is None:
             post_format = choice(misc.formats)
 
-        interests = random_interest(
+        interests = get_random_interest(
             randint(min_interest_count, max_interest_count), interests=post_interests
         )
         interest_agents = {interest: InterestAgent(interest) for interest in interests}

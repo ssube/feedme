@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+from feedme.models.base import dataclass
 
 
-class PromptsModel(BaseModel):
+@dataclass
+class PromptsModel:
     choose_image_size: str
     critique_image_binary: str
     critique_image_opinion: str

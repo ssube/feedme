@@ -22,11 +22,11 @@ def generate_keywords(agent, description):
 
 
 @task()
-def elaborate_characters(agent, description, keywords):
+def elaborate_characters(agent, description, base_keywords):
     return agent(
         prompts.elaborate_characters,
         description=description,
-        keywords=keywords,
+        keywords=base_keywords,
     )
 
 
@@ -39,25 +39,25 @@ def elaborate_scene(agent, scene):
 
 
 @task()
-def elaborate_quality(agent, keywords):
+def elaborate_quality(agent, base_keywords):
     return agent(
         prompts.elaborate_quality,
-        keywords=keywords,
-        quality_keywords=keywords.quality,
+        keywords=base_keywords,
+        quality_keywords=base_keywords.quality,
     )
 
 
 @task()
-def remove_abstract_concepts(agent, keywords):
+def remove_abstract_concepts(agent, base_keywords):
     return agent(
         prompts.remove_concepts,
-        keywords=keywords,
+        keywords=base_keywords,
     )
 
 
 @task()
-def generate_examples(keywords, length=120, n=5, k=3):
-    keyword_list = keywords.split(",")
+def generate_examples(base_keywords, length=120, n=5, k=3):
+    keyword_list = base_keywords.split(",")
     keyword_list = [keyword.strip() for keyword in keyword_list]
 
     example_prompts = []
@@ -73,17 +73,17 @@ def generate_examples(keywords, length=120, n=5, k=3):
 
 @task()
 def generate_prompt(agent, description, qk=6):
-    keywords = generate_keywords(agent, description)
-    characters = elaborate_characters(agent, description, keywords)
+    base_keywords = generate_keywords(agent, description)
+    characters = elaborate_characters(agent, description, base_keywords)
     scene = elaborate_scene(agent, description)
 
-    example_prompts = generate_examples(keywords)
+    example_prompts = generate_examples(base_keywords)
 
     prompt = agent(
         prompts.generate_prompt,
         example_prompts=format_bullet_list(example_prompts),
         characters=characters,
-        keywords=keywords,
+        keywords=base_keywords,
         scene=scene,
     )
     prompt = remove_abstract_concepts(agent, prompt)

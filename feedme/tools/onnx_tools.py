@@ -24,8 +24,8 @@ onnx_root = environ.get("ONNX_API", None)
 @tool(name="generate_image")
 def generate_image_tool(prompt: str, count: int, size: ImageSize = "landscape") -> str:
     output_paths = []
-    for i in range(count + int(misc.images.extra)):
-        results = generate_images(prompt, int(misc.images.batch), size)
+    for i, count in enumerate(generate_batches(count + misc.images.extra)):
+        results = generate_images(prompt, count, size)
         if isinstance(results, str):
             output_paths.append(results)
 
@@ -75,19 +75,40 @@ def generate_images(
         return results
 
 
-def generate_steps(min_steps: int = 25, max_steps: int = 40) -> int:
-    return randint(min_steps // 5, max_steps // 5) * 5
+def generate_batches(
+    count: int,
+    batch_size: int = misc.images.batch,
+) -> List[int]:
+    """
+    Generate count images in batches of at most batch_size.
+    """
+
+    batches = []
+    for i in range(0, count, batch_size):
+        batches.append(min(count - i, batch_size))
+
+    return batches
 
 
-def generate_cfg() -> float:
-    return randint(3, 8)
+def generate_steps(
+    min_steps: int = misc.images.steps.min,
+    max_steps: int = misc.images.steps.max,
+    increment=misc.images.steps.increment,
+) -> int:
+    return randint(min_steps // increment, max_steps // increment) * increment
+
+
+def generate_cfg(
+    min_cfg: float = misc.images.cfg.min, max_cfg: float = misc.images.cfg.max
+) -> float:
+    return randint(min_cfg, max_cfg)
 
 
 def generate_txt2img(
     host: str, prompt: str, count: int, height: int, width: int
 ) -> str:
     cfg = generate_cfg()
-    steps = generate_steps(min_steps=25 + cfg)
+    steps = generate_steps(min_steps=misc.images.steps.min + cfg)
     image_parameters = {
         "device": {
             "platform": "cuda",

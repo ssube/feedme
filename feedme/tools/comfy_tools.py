@@ -15,6 +15,7 @@ from PIL import Image
 from traceloop.sdk.decorators import tool
 
 from feedme.data import get_save_path, misc, prompts
+from feedme.tools.onnx_tools import generate_batches, generate_cfg, generate_steps
 
 logger = getLogger(__name__)
 
@@ -75,11 +76,20 @@ def get_images(ws, prompt):
     return output_images
 
 
-@tool()
+@tool(name="generate_image")
+def generate_image_tool(prompt, count, size="landscape"):
+    output_paths = []
+    for count in generate_batches(count + misc.images.extra):
+        results = generate_images(prompt, count, size)
+        output_paths.extend(results)
+
+    return output_paths
+
+
 def generate_images(prompt: str, count: int, size="landscape") -> str:
-    cfg = randint(3, 8)
+    cfg = generate_cfg()
     dims = misc.sizes.get(size)
-    steps = randint(5, 8) * 5
+    steps = generate_steps(min_steps=misc.images.steps.min + cfg)
     seed = randint(0, 10000000)
     logger.debug("Generating %s images at %s with prompt: %s", count, dims, prompt)
 
@@ -133,7 +143,7 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
         },
         "9": {
             "class_type": "SaveImage",
-            "inputs": {"filename_prefix": "ComfyUI", "images": ["8", 0]},
+            "inputs": {"filename_prefix": misc.bot.name, "images": ["8", 0]},
         },
     }
 

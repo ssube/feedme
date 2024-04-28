@@ -1,68 +1,99 @@
 from typing import Dict, List, Optional, Tuple
 
-from pydantic import BaseModel
+from feedme.models.base import dataclass
 
 
-class OnnxData(BaseModel):
+@dataclass
+class MinMaxData:
+    min: int
+    max: int
+
+
+@dataclass
+class OnnxData:
     filter: str
     remove: str
     retries: int
     poll: int
-    batch: int  # TODO: move to ImageData
-    extra: int  # TODO: move to ImageData
 
 
-class LlmData(BaseModel):  # TODO: add a nested model for each llm
+@dataclass
+class SingleLlmData:
+    model: str
+    temperature: float
+
+
+@dataclass
+class LlmData:
     gpt2: str
-    creative: str
-    creative_temperature: float
-    manager: str
-    manager_temperature: float
+    creative: SingleLlmData
+    manager: SingleLlmData
 
 
-class BotData(BaseModel):
+@dataclass
+class BotData:
     name: str
     # TODO: url
 
 
-class ImageData(BaseModel):
-    min: int
-    max: int
+@dataclass
+class CfgData:
+    increment: float
+    min: float
+    max: float
+
+
+@dataclass
+class StepData(MinMaxData):
+    increment: int
+
+
+@dataclass
+class ImageData:
     batch: int
+    cfg: CfgData
+    count: MinMaxData
     extra: int
+    steps: StepData
 
 
-class InterestData(BaseModel):
-    min: int
-    max: int
+@dataclass
+class InterestData(MinMaxData):
+    pass
 
 
-class PostData(BaseModel):
+@dataclass
+class PostData:
     count: int
     retry: int
 
 
-class ConceptRankingData(BaseModel):
+@dataclass
+class ConceptRankingData:
     max: int
     threshold: float
 
 
-class ImageRankingData(BaseModel):
+@dataclass
+class ImageRankingData:
     max: int
     threshold: float
 
 
-class PostRankingData(BaseModel):
+@dataclass
+class PostRankingData:
     threshold: float
 
 
-class RankingData(BaseModel):
+@dataclass
+class RankingData:
     concept: ConceptRankingData
     image: ImageRankingData
     post: PostRankingData
 
 
-class MiscData(BaseModel):
+@dataclass
+class MiscData:
     formats: List[str]
     modifiers: Dict[str, str]
     checkpoints: List[str]

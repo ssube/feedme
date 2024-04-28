@@ -1,11 +1,11 @@
 from datetime import datetime
 from json import load
 from logging import getLogger
-from os import environ, listdir, path
+from os import listdir, path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from feedme.data import misc
+from feedme.data import get_save_path, misc
 
 logger = getLogger(__name__)
 
@@ -65,7 +65,7 @@ def template_page(title, posts, template=None, **kwargs):
 
 
 def main():
-    root_path = environ.get("ROOT_PATH", "/tmp/feedme-posts")
+    root_path = get_save_path()
     logger.info(f"Generating index for {root_path}")
     posts = list_posts(root_path)
     page = template_page(misc.bot.name, posts)
