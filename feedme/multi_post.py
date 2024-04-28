@@ -1,7 +1,7 @@
 from collections import Counter
 from json import dumps
 from os import environ, makedirs, path
-from random import choice, randint, sample
+from random import choice, randint
 from shutil import move, rmtree
 from time import monotonic
 
@@ -15,12 +15,13 @@ from traceloop.sdk.decorators import task
 from feedme.data import (
     agent_backstory,
     get_bot_name,
+    get_interest_story,
     llms,
     modifiers,
     post_formats,
     prompts,
+    random_interest,
     set_save_path,
-    special_interests,
 )
 from feedme.tools.civitai_tools import close_page, create_post, launch_login
 from feedme.tools.comfy_tools import generate_images
@@ -76,20 +77,18 @@ creative_llm = agent_easy_connect(
 )
 
 
-def random_interest(k=6, interests=None):
-    if interests is None:
-        interests = list(special_interests.keys())
-
-    return sample(interests, k=k)
-
-
 def InterestAgent(interest: str, **kwargs):
-    backstory = agent_backstory["Interest Scientist"]
-    interest_story = special_interests[interest]
+    base_story = agent_backstory["Interest Scientist"]
+    interest_story = get_interest_story(interest)
+
+    backstory = f"{base_story} {interest_story}"
+    logger.debug(
+        "creating agent for interest %s with backstory: %s", interest, backstory
+    )
 
     return Agent(
         f"{interest} scientist",
-        f"{backstory} {interest_story}",
+        backstory,
         {
             **kwargs,
             "interest": interest,

@@ -1,4 +1,5 @@
 from os import environ, path
+from random import choice, sample
 
 from dotenv import load_dotenv
 from yaml import Loader, load
@@ -48,3 +49,69 @@ def set_save_path(path: str) -> None:
 
 def get_bot_name() -> str:
     return bot["name"]
+
+
+# grouped interests
+grouped_interests = {}
+
+
+def group_interests():
+    """
+    Group interests by category. If the interest is a string, assume the key is the category and put it into its own
+    group.
+    """
+    global grouped_interests
+
+    def extend_category(category, interests):
+        if category in grouped_interests:
+            grouped_interests[category].extend(interests)
+        else:
+            grouped_interests[category] = interests
+
+    for key, interest in special_interests.items():
+        if isinstance(interest, (list, str)):
+            extend_category(key, [key])
+        elif isinstance(interest, dict):
+            category = interest.get("category", key)
+            extend_category(category, [key])
+        else:
+            raise ValueError(f"Invalid interest type: {interest}")
+
+    print(f"Grouped interests: {grouped_interests}")
+    return grouped_interests
+
+
+def random_interest(k=6, interests=None):
+    """
+    Get k random interests from the grouped interests, one from each category.
+    """
+
+    # select k random categories
+    keys = interests or list(grouped_interests.keys())
+    categories = sample(keys, k)
+
+    # select one interest from each category
+    interests = []
+    for category in categories:
+        group = grouped_interests[category]
+        interests.append(choice(group))
+
+    print(f"Random interests: {interests}")
+    return interests
+
+
+def get_interest_story(interest):
+    interest_data = special_interests[interest]
+    if isinstance(interest_data, dict):
+        interest_story = interest_data["backstory"]
+    else:
+        interest_story = interest_data
+
+    if isinstance(interest_story, list):
+        interest_story = choice(interest_story)
+
+    return interest_story
+
+
+# initialize
+group_interests()
