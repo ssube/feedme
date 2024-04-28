@@ -84,13 +84,15 @@ function createPost() {
               // add to page
               const item = document.createElement('li');
               if (update["done"]) {
-                const postPath = update["result"]; // needs to use the folder basename
-                const postName = postPath.split('/').pop();
+                const postPaths = update["result"]; // needs to use the folder basename
+                for (const postPath of postPaths) {
+                  const postName = postPath.split('/').pop();
 
-                const link = document.createElement('a');
-                link.href = `/${postName}`;
-                link.textContent = `View post: ${postName}`;
-                item.appendChild(link);
+                  const link = document.createElement('a');
+                  link.href = `/${postName}/post.html`;
+                  link.textContent = `View post: ${postName}`;
+                  item.appendChild(link);
+                }
               } else {
                 const code = document.createElement('pre');
                 code.textContent = formatUpdate(update);
