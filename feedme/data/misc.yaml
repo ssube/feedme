@@ -27,10 +27,12 @@ onnx:
 
 llms:
     gpt2: Civitai/promptgen-sfw-250k
-    creative: nous-hermes2-mixtral
-    creative_temperature: 0.65
-    manager: nous-hermes2-mixtral
-    manager_temperature: 0.10
+    creative:
+        model: nous-hermes2-mixtral
+        temperature: 0.65
+    manager:
+        model: nous-hermes2-mixtral
+        temperature: 0.10
 
 sizes: {
     landscape: [960, 1280],
@@ -42,7 +44,7 @@ bot:
     name: "FeedMe - Demo"
 
 images:
-    batch: 1
+    batch: 2
     cfg:
         increment: 0.5
         min: 3.0

@@ -22,10 +22,10 @@ from feedme.data import (
     set_save_path,
 )
 from feedme.tools.civitai_tools import close_page, create_post, launch_login
-from feedme.tools.comfy_tools import generate_images
+from feedme.tools.comfy_tools import generate_image_tool as generate_image_comfy
 from feedme.tools.html_tools import template_post
 from feedme.tools.image_tools import get_image_data
-from feedme.tools.onnx_tools import download_input_images, generate_image_tool
+from feedme.tools.onnx_tools import download_input_images, generate_image_tool as generate_image_onnx
 from feedme.utils.misc import (
     cleanup_sentence,
     format_bullet_list,
@@ -109,9 +109,9 @@ def append_post_notice(body: str, hash: str):
 @task()
 def do_images(prompt, count, size, tool=image_tool):
     if tool == "comfy":
-        results = generate_images(prompt, count, size=size)
+        results = generate_image_comfy(prompt, count, size=size)
     elif tool == "onnx":
-        results = generate_image_tool(prompt, count, size=size)
+        results = generate_image_onnx(prompt, count, size=size)
     else:
         logger.error("unknown image tool: %s", tool)
         return []

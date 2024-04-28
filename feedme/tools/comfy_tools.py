@@ -91,7 +91,7 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
     dims = misc.sizes.get(size)
     steps = generate_steps(min_steps=misc.images.steps.min + cfg)
     seed = randint(0, 10000000)
-    logger.debug("Generating %s images at %s with prompt: %s", count, dims, prompt)
+    logger.info("generating %s images at %s with prompt: %s", count, dims, prompt)
 
     prompt_workflow = {
         "3": {
@@ -147,7 +147,7 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
         },
     }
 
-    print("Connecting to Comfy API at {}".format(server_address))
+    logger.debug("Connecting to Comfy API at %s", server_address)
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, prompt_workflow)
@@ -175,4 +175,4 @@ if __name__ == "__main__":
     paths = generate_images(
         "A painting of a beautiful sunset over a calm lake", 3, "landscape"
     )
-    print(paths)
+    logger.info("Generated %d images: %s", len(paths), paths)
