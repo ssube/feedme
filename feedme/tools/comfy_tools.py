@@ -9,6 +9,7 @@ import uuid
 from logging import getLogger
 from os import environ, path
 from random import choice, randint
+from typing import List
 
 import websocket  # NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
 from PIL import Image
@@ -79,17 +80,19 @@ def get_images(ws, prompt):
 @tool(name="generate_image")
 def generate_image_tool(prompt, count, size="landscape"):
     output_paths = []
-    for count in generate_batches(count + misc.images.extra):
-        results = generate_images(prompt, count, size)
+    for i, count in enumerate(generate_batches(count + misc.images.extra)):
+        results = generate_images(prompt, count, size, prefix=f"output-{i}")
         output_paths.extend(results)
 
     return output_paths
 
 
-def generate_images(prompt: str, count: int, size="landscape") -> str:
+def generate_images(
+    prompt: str, count: int, size="landscape", prefix="output"
+) -> List[str]:
     cfg = generate_cfg()
-    dims = misc.sizes.get(size)
-    steps = generate_steps(min_steps=misc.images.steps.min + cfg)
+    dims = misc.sizes.get(size, (512, 512))
+    steps = generate_steps(min_steps=int(misc.images.steps.min + cfg))
     seed = randint(0, 10000000)
     logger.info("generating %s images at %s with prompt: %s", count, dims, prompt)
 
@@ -158,9 +161,9 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
             image = Image.open(io.BytesIO(image_data))
             results.append(image)
 
-    paths = []
+    paths: List[str] = []
     for j, image in enumerate(results):
-        image_path = path.join(get_save_path(), f"output-{j}.png")
+        image_path = path.join(get_save_path(), f"{prefix}-{j}.png")
         with open(image_path, "wb") as f:
             image_bytes = io.BytesIO()
             image.save(image_bytes, format="PNG")

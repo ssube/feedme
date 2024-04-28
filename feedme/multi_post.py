@@ -25,7 +25,8 @@ from feedme.tools.civitai_tools import close_page, create_post, launch_login
 from feedme.tools.comfy_tools import generate_image_tool as generate_image_comfy
 from feedme.tools.html_tools import template_post
 from feedme.tools.image_tools import get_image_data
-from feedme.tools.onnx_tools import download_input_images, generate_image_tool as generate_image_onnx
+from feedme.tools.onnx_tools import download_input_images
+from feedme.tools.onnx_tools import generate_image_tool as generate_image_onnx
 from feedme.utils.misc import (
     cleanup_sentence,
     format_bullet_list,

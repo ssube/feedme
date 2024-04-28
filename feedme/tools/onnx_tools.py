@@ -2,9 +2,9 @@ from io import BytesIO
 from json import dumps
 from logging import getLogger
 from os import environ, path
-from random import choice, randint
+from random import choice, randint, random
 from time import sleep
-from typing import List, Literal
+from typing import List, Literal, Sequence
 from urllib.request import urlretrieve
 
 import requests
@@ -22,8 +22,10 @@ onnx_root = environ.get("ONNX_API", None)
 
 
 @tool(name="generate_image")
-def generate_image_tool(prompt: str, count: int, size: ImageSize = "landscape") -> str:
-    output_paths = []
+def generate_image_tool(
+    prompt: str, count: int, size: ImageSize = "landscape"
+) -> List[str]:
+    output_paths: List[str] = []
     for i, count in enumerate(generate_batches(count + misc.images.extra)):
         results = generate_images(prompt, count, size)
         if isinstance(results, str):
@@ -44,8 +46,15 @@ def generate_image_tool(prompt: str, count: int, size: ImageSize = "landscape") 
 
 def generate_images(
     prompt: str, count: int, size: ImageSize = "landscape"
-) -> List[Image.Image]:
-    dims = misc.sizes.get(size)
+) -> Sequence[Image.Image | str]:
+    # make sure onnx config exists
+    if misc.onnx is None:
+        raise ValueError("onnx config not found")
+
+    if onnx_root is None:
+        raise ValueError("onnx api not found")
+
+    dims = misc.sizes.get(size, (512, 512))
     with trace("generate_images", "feedme.onnx") as (report_args, report_result):
         report_args(prompt=prompt, count=count, size=size)
         job = generate_txt2img(onnx_root, prompt, count, *dims)
@@ -101,14 +110,14 @@ def generate_steps(
 def generate_cfg(
     min_cfg: float = misc.images.cfg.min, max_cfg: float = misc.images.cfg.max
 ) -> float:
-    return randint(min_cfg, max_cfg)
+    return (random() * (max_cfg - min_cfg)) + min_cfg
 
 
 def generate_txt2img(
     host: str, prompt: str, count: int, height: int, width: int
 ) -> str:
     cfg = generate_cfg()
-    steps = generate_steps(min_steps=misc.images.steps.min + cfg)
+    steps = generate_steps(min_steps=int(misc.images.steps.min + cfg))
     image_parameters = {
         "device": {
             "platform": "cuda",

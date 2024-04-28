@@ -1,8 +1,4 @@
-formats: [
-    "social media post",
-    "brief daydream",
-    "journal entry",
-]
+formats: ["social media post", "brief daydream", "journal entry"]
 
 modifiers:
     "everyone": >-
@@ -12,12 +8,13 @@ modifiers:
     "niche": >-
         You are creating a post for a specific audience and their singular interest.
 
-checkpoints: [
-    "diffusion-sdxl-dynavision-0-5-5-7",
-    "diffusion-sdxl-faetastic-v2",
-    "diffusion-sdxl-photographic-fantastic-creatures-v1-0",
-    "diffusion-sdxl-protovision-xl-v0-6-3-0",
-]
+checkpoints:
+    [
+        "diffusion-sdxl-dynavision-0-5-5-7",
+        "diffusion-sdxl-faetastic-v2",
+        "diffusion-sdxl-photographic-fantastic-creatures-v1-0",
+        "diffusion-sdxl-protovision-xl-v0-6-3-0",
+    ]
 
 onnx:
     filter: Civitai/promptgen-sfw-250k
@@ -34,11 +31,10 @@ llms:
         model: nous-hermes2-mixtral
         temperature: 0.10
 
-sizes: {
-    landscape: [960, 1280],
-    portrait: [1280, 960],
-    square: [1024, 1024],
-}
+sizes:
+    landscape: [960, 1280]
+    portrait: [1280, 960]
+    square: [1024, 1024]
 
 bot:
     name: "FeedMe - Demo"
