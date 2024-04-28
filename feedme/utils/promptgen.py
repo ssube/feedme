@@ -5,7 +5,7 @@ from re import sub
 from packit.formats import format_bullet_list
 from traceloop.sdk.decorators import task
 
-from feedme.data import llms, prompts, quality_keywords, remove_concepts
+from feedme.data import keywords, misc, prompts
 from feedme.utils.gpt2 import generate_text
 from feedme.utils.misc import cleanup_sentence
 
@@ -15,16 +15,16 @@ logger = getLogger(__name__)
 @task()
 def generate_keywords(agent, description):
     return agent(
-        prompts["generate_keywords"],
+        prompts.generate_keywords,
         description=description,
-        example_concepts=format_bullet_list(remove_concepts),
+        example_concepts=format_bullet_list(keywords.remove),
     )
 
 
 @task()
 def elaborate_characters(agent, description, keywords):
     return agent(
-        prompts["elaborate_characters"],
+        prompts.elaborate_characters,
         description=description,
         keywords=keywords,
     )
@@ -33,7 +33,7 @@ def elaborate_characters(agent, description, keywords):
 @task()
 def elaborate_scene(agent, scene):
     return agent(
-        prompts["elaborate_scene"],
+        prompts.elaborate_scene,
         scene=scene,
     )
 
@@ -41,16 +41,16 @@ def elaborate_scene(agent, scene):
 @task()
 def elaborate_quality(agent, keywords):
     return agent(
-        prompts["elaborate_quality"],
+        prompts.elaborate_quality,
         keywords=keywords,
-        quality_keywords=quality_keywords,
+        quality_keywords=keywords.quality,
     )
 
 
 @task()
 def remove_abstract_concepts(agent, keywords):
     return agent(
-        prompts["remove_concepts"],
+        prompts.remove_concepts,
         keywords=keywords,
     )
 
@@ -64,7 +64,7 @@ def generate_examples(keywords, length=120, n=5, k=3):
     for _ in range(n):
         selected_keywords = sample(keyword_list, k=min(k, len(keyword_list)))
         logger.info("generating example prompt with keywords: %s", selected_keywords)
-        prompt = generate_text(llms["gpt2"], ",".join(selected_keywords), length)
+        prompt = generate_text(misc.llms.gpt2, ",".join(selected_keywords), length)
         prompt = sub(r"^(.+)(?:,.*)$", r"\1", prompt)
         example_prompts.append(prompt)
 
@@ -80,7 +80,7 @@ def generate_prompt(agent, description, qk=6):
     example_prompts = generate_examples(keywords)
 
     prompt = agent(
-        prompts["generate_prompt"],
+        prompts.generate_prompt,
         example_prompts=format_bullet_list(example_prompts),
         characters=characters,
         keywords=keywords,
@@ -89,5 +89,5 @@ def generate_prompt(agent, description, qk=6):
     prompt = remove_abstract_concepts(agent, prompt)
     prompt = cleanup_sentence(prompt, trailing_period=False)
 
-    quality = sample(quality_keywords, k=qk)
+    quality = sample(keywords.quality, k=qk)
     return prompt + ", " + ", ".join(quality)

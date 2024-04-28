@@ -22,6 +22,7 @@ opentelemetry-util-http==0.45b0
 pandas==2.2.1
 pillow==10.2.0
 playwright==1.42.0
+pydantic==2.6.4
 python-dotenv==1.0.1
 PyYAML==6.0.1
 requests==2.31.0

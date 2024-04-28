@@ -29,7 +29,7 @@ toolbox = Toolbox(
 )
 
 # Come up with a title and description
-result = programmer(prompts["demo_idea"])
+result = programmer(prompts.demo_idea)
 print("Result: ", result)
 
 title, *description = [line for line in result.split("\n") if len(line.strip()) > 0]
@@ -37,7 +37,7 @@ description = "\n".join(description)
 
 # Have them create a post using the civitai tools
 result = programmer(
-    prompts["demo_post"] + get_random_prompt("function"),
+    prompts.demo_post + get_random_prompt("function"),
     description=description,
     example=get_function_example(),
     images=["/home/ssube/Pictures/Screenshot_2024-03-25_13-38-49.png"],

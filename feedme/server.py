@@ -10,7 +10,7 @@ from flask import Flask, jsonify, request, send_file
 from packit.tracing import set_tracer
 from packit.tracing.traceloop import dumper
 
-from feedme.data import get_bot_name, special_interests
+from feedme.data import agents, misc
 from feedme.index_page import list_posts, template_page
 from feedme.multi_post import main, root_path
 from feedme.progress_tracer import make_tracer
@@ -25,20 +25,18 @@ POST_TEMPLATE = "default.html.j2"
 post_path = path.join(root_path, "approved")
 
 
-app = Flask(get_bot_name())
+app = Flask(misc.bot.name)
 
 
 @app.route("/", methods=["GET"])
 def posts():
     posts = list_posts(post_path)
-    return template_page(get_bot_name(), posts, INDEX_TEMPLATE)
+    return template_page(misc.bot.name, posts, INDEX_TEMPLATE)
 
 
 @app.route("/create", methods=["GET"])
 def create():
-    return template_page(
-        get_bot_name(), [], CREATE_TEMPLATE, interests=special_interests
-    )
+    return template_page(misc.bot.name, [], CREATE_TEMPLATE, interests=agents.interests)
 
 
 @app.route("/<string:post_id>", methods=["GET"])

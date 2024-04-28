@@ -5,7 +5,7 @@ from os import environ, listdir, path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from feedme.data import get_bot_name
+from feedme.data import misc
 
 logger = getLogger(__name__)
 
@@ -68,7 +68,7 @@ def main():
     root_path = environ.get("ROOT_PATH", "/tmp/feedme-posts")
     logger.info(f"Generating index for {root_path}")
     posts = list_posts(root_path)
-    page = template_page(get_bot_name(), posts)
+    page = template_page(misc.bot.name, posts)
 
     with open(path.join(root_path, "index.html"), "w") as f:
         f.write(page)

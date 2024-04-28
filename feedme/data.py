@@ -4,6 +4,11 @@ from random import choice, sample
 from dotenv import load_dotenv
 from yaml import Loader, load
 
+from feedme.models.agents import AgentsModel, InterestModel
+from feedme.models.keywords import KeywordsModel
+from feedme.models.misc import MiscData
+from feedme.models.prompts import PromptsModel
+
 load_dotenv(environ.get("FEEDME_ENV", ".env"), override=True)
 
 data_base = environ.get("FEEDME_DATA", "feedme/data")
@@ -20,21 +25,14 @@ with open(path.join(data_base, "misc.yaml"), "r") as f:
 with open(path.join(data_base, "prompts.yaml"), "r") as f:
     prompt_data = load(f, Loader)
 
-# don't look at this part, it's not good
-agent_backstory = agent_data["backstory"]
-special_interests = agent_data["interests"]
-quality_keywords = keyword_data["quality"]
-remove_concepts = keyword_data["remove"]
-modifiers = misc_data["modifiers"]
-post_formats = misc_data["formats"]
-checkpoint_models = misc_data["checkpoints"]
-size_presets = misc_data["sizes"]
-prompts = prompt_data  # ["prompts"]
-llms = misc_data["llms"]
-onnx = misc_data["onnx"]
-bot = misc_data["bot"]
+# load and validate
+agents = AgentsModel(**agent_data)
+keywords = KeywordsModel(**keyword_data)
+misc = MiscData(**misc_data)
+prompts = PromptsModel(**prompt_data)
 
 
+# TODO: get rid of this, move to data or env
 save_path = "/tmp"
 
 
@@ -45,10 +43,6 @@ def get_save_path() -> str:
 def set_save_path(path: str) -> None:
     global save_path
     save_path = path
-
-
-def get_bot_name() -> str:
-    return bot["name"]
 
 
 # grouped interests
@@ -68,16 +62,19 @@ def group_interests():
         else:
             grouped_interests[category] = interests
 
-    for key, interest in special_interests.items():
+    for key, interest in agents.interests.items():
         if isinstance(interest, (list, str)):
             extend_category(key, [key])
         elif isinstance(interest, dict):
             category = interest.get("category", key)
             extend_category(category, [key])
+        elif isinstance(interest, InterestModel):
+            category = interest.category or key
+            extend_category(category, [key])
         else:
             raise ValueError(f"Invalid interest type: {interest}")
 
-    print(f"Grouped interests: {grouped_interests}")
+    # print(f"Grouped interests: {grouped_interests}")
     return grouped_interests
 
 
@@ -100,14 +97,16 @@ def random_interest(k=6, interests=None):
         group = grouped_interests[category]
         interests.append(choice(group))
 
-    print(f"Random interests: {interests}")
+    # print(f"Random interests: {interests}")
     return interests
 
 
 def get_interest_story(interest):
-    interest_data = special_interests[interest]
+    interest_data = agents.interests[interest]
     if isinstance(interest_data, dict):
         interest_story = interest_data["backstory"]
+    elif isinstance(interest_data, InterestModel):
+        interest_story = interest_data.backstory
     else:
         interest_story = interest_data
 

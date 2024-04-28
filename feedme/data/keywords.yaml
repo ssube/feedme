@@ -46,11 +46,3 @@ remove: [
     "smell",
     "scent",
 ]
-
-# TODO: unused, remove
-concepts: [
-    "enchanted forest",
-    "magical garden",
-    "masquerade ball",
-    "underwater city",
-]

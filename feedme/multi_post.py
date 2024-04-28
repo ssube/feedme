@@ -13,12 +13,9 @@ from packit.utils import logger_with_colors
 from traceloop.sdk.decorators import task
 
 from feedme.data import (
-    agent_backstory,
-    get_bot_name,
+    agents,
     get_interest_story,
-    llms,
-    modifiers,
-    post_formats,
+    misc,
     prompts,
     random_interest,
     set_save_path,
@@ -68,17 +65,17 @@ working_path = path.join(root_path, "working")
 
 # configure LLMs
 manager_llm = agent_easy_connect(
-    model=llms["manager"],
-    temperature=float(llms["manager_temperature"]),
+    model=misc.llms.manager,
+    temperature=misc.llms.manager_temperature,
 )
 creative_llm = agent_easy_connect(
-    model=llms["creative"],
-    temperature=float(llms["creative_temperature"]),
+    model=misc.llms.creative,
+    temperature=misc.llms.creative_temperature,
 )
 
 
 def InterestAgent(interest: str, **kwargs):
-    base_story = agent_backstory["Interest Scientist"]
+    base_story = agents.backstory["Interest Scientist"]
     interest_story = get_interest_story(interest)
 
     backstory = f"{base_story} {interest_story}"
@@ -105,11 +102,10 @@ def make_post_paths():
 
 
 def append_post_notice(body: str, hash: str):
-    bot_name = get_bot_name()
-    notice_template = prompts["post_notice"]
-    return notice_template.format(body=body, bot_name=bot_name, hash=hash)
+    return prompts.post_notice.format(body=body, bot_name=misc.bot.name, hash=hash)
 
 
+@task()
 def do_images(prompt, count, size, tool=image_tool):
     if tool == "comfy":
         results = generate_images(prompt, count, size=size)
@@ -123,6 +119,7 @@ def do_images(prompt, count, size, tool=image_tool):
     return results
 
 
+@task()
 def do_post(post_slug, post_description, post_hash, post, tool=post_tool):
     description = append_post_notice(post_description, post_hash)
     if tool == "civitai":
@@ -163,7 +160,7 @@ def do_post(post_slug, post_description, post_hash, post, tool=post_tool):
 def generate_concepts(interest_agents, min_words=2, max_words=4):
     interest_panel = Panel(list(interest_agents.values()), name="concepts")
     panel_results = interest_panel.sample(
-        prompts["generate_concepts"],
+        prompts.generate_concepts,
         {
             "min_words": min_words,
             "max_words": max_words,
@@ -183,7 +180,7 @@ def concept_ranking_each_bool(interest_agents, concepts):
     for concept in concepts.values():
         interest_panel = Panel(list(interest_agents.values()), "concepts")
         panel_results = interest_panel.sample(
-            prompts["rank_concepts_binary"],
+            prompts.rank_concepts_binary,
             {
                 "concept": concept,
             },
@@ -207,8 +204,8 @@ def concept_ranking_each_bool(interest_agents, concepts):
 def concept_ranking_each_scale(
     interest_agents,
     concepts,
-    ranking_threshold=3,  # TODO: move to data
-    max_score=5,  # TODO: move to data
+    ranking_threshold=misc.ranking.concept.threshold,
+    max_score=misc.ranking.concept.max,
     count=1,
 ):
     selected_concepts = []
@@ -218,7 +215,7 @@ def concept_ranking_each_scale(
         interest_panel = Panel(list(interest_agents.values()), name="concepts")
         try:
             panel_results = interest_panel.sample(
-                prompts["rank_concepts_scale"],
+                prompts.rank_concepts_scale,
                 {
                     "concept": concept,
                     "max_score": max_score,
@@ -267,7 +264,7 @@ def image_size_choice(interest_agents, description):
 
     for scientist in interest_agents.values():
         image_ratio = scientist(
-            prompts["choose_image_size"],
+            prompts.choose_image_size,
             description=description,
         ).lower()
 
@@ -315,10 +312,10 @@ def image_ranking_sort(interests, interest_agents, image_data, count, max_rank_r
         while rank_retry < max_rank_retry:
             careful_warning = ""
             if rank_retry > 0:
-                careful_warning = prompts["rank_image_sort_retry"]
+                careful_warning = prompts.rank_image_sort_retry
 
             ranking = scientist(
-                prompts["rank_image_sort"],
+                prompts.rank_image_sort,
                 careful_warning=careful_warning,
                 image_data=image_data,
             )
@@ -361,7 +358,7 @@ def image_ranking_each_bool(interests, interest_agents, image_data, count, descr
             [interest_agents[interest] for interest in interests], name="images"
         )
         panel_results = interest_panel.sample(
-            prompts["rank_image_binary"],
+            prompts.rank_image_binary,
             {
                 "caption": caption,
             },
@@ -388,8 +385,8 @@ def image_ranking_each_scale(
     image_data,
     count,
     description,
-    ranking_threshold=3.5,  # TODO: move to data
-    max_score=5,  # TODO: move to data
+    ranking_threshold=misc.ranking.image.threshold,
+    max_score=misc.ranking.image.max,
 ):
     selected_images = []
     selected_rankings = Counter()
@@ -402,7 +399,7 @@ def image_ranking_each_scale(
             [interest_agents[interest] for interest in interests], name="images"
         )
         panel_results = interest_panel.sample(
-            prompts["rank_image_scale"],
+            prompts.rank_image_scale,
             {
                 "caption": caption,
                 "description": description,
@@ -449,7 +446,7 @@ def image_ranking_each_scale(
 def image_critique_group_bool(critics, context):
     panel = Panel(list(critics.values()), name="critics")
     critiques = panel.sample(
-        prompts["critique_image_opinion"],
+        prompts.critique_image_opinion,
         context,
         result_parser=str_parser,
     )
@@ -458,7 +455,7 @@ def image_critique_group_bool(critics, context):
         logger.info("critique from %s: %s", agent_name, critique)
 
     ratings = panel.sample(
-        prompts["critique_image_binary"],
+        prompts.critique_image_binary,
         context,
     )
 
@@ -472,7 +469,7 @@ def image_critique_group_bool(critics, context):
 def image_critique_group_scale(critics, context):
     panel = Panel(list(critics.values()), name="critics")
     critiques = panel.sample(
-        prompts["critique_image_opinion"],
+        prompts.critique_image_opinion,
         context,
         result_parser=str_parser,
     )
@@ -481,7 +478,7 @@ def image_critique_group_scale(critics, context):
         logger.info("critique from %s: %s", agent_name, critique)
 
     ratings = panel.sample(
-        prompts["critique_image_scale"],
+        prompts.critique_image_scale,
         context,
         result_parser=int_result,
     )
@@ -556,7 +553,7 @@ def generate_ideas(interests, interest_agents):
     for interest in interests:
         scientist = interest_agents[interest]
         logger.debug("running scientist for interest: %s", interest)
-        idea = scientist(prompts["generate_ideas"])
+        idea = scientist(prompts.generate_ideas)
         logger.info("%s scientist came up with an idea: %s", interest, idea)
         ideas[interest] = idea
 
@@ -567,7 +564,7 @@ def generate_ideas(interests, interest_agents):
 @task()
 def generate_description(interests, social_media_manager, ideas):
     post_description = social_media_manager(
-        prompts["generate_description"],
+        prompts.generate_description,
         ideas=format_bullet_list(ideas.values()),
     )
     logger.info("post description: %s", post_description)
@@ -575,13 +572,13 @@ def generate_description(interests, social_media_manager, ideas):
 
 
 def main(
-    approval_threshold=0.65,  # TODO: move to data
-    concept_count=20,  # TODO: move to data
-    max_post_retry=3,
-    min_image_count=3,  # TODO: move to data
-    max_image_count=5,  # TODO: move to data
-    min_interest_count=2,  # TODO: move to data
-    max_interest_count=5,  # TODO: move to data
+    approval_threshold=misc.ranking.post.threshold,
+    concept_count=misc.posts.count,
+    max_post_retry=misc.posts.retry,
+    min_image_count=misc.images.min,
+    max_image_count=misc.images.max,
+    min_interest_count=misc.interests.min,
+    max_interest_count=misc.interests.max,
     post_interests=None,
     post_format=None,
 ):
@@ -592,7 +589,7 @@ def main(
 
     for _ in range(concept_count):
         if post_format is None:
-            post_format = choice(post_formats)
+            post_format = choice(misc.formats)
 
         interests = random_interest(
             randint(min_interest_count, max_interest_count), interests=post_interests
@@ -637,7 +634,7 @@ def main(
                         start_time = monotonic()
 
                         # extract parameters
-                        modifier = choice(list(modifiers.values()))
+                        modifier = choice(list(misc.modifiers.values()))
                         count = randint(min_image_count, max_image_count)
                         interests = input["interests"]
                         theme = input["theme"]
@@ -665,13 +662,13 @@ def main(
 
                         social_media_manager = Agent(
                             "social media manager",
-                            agent_backstory["Social Media Manager"],
+                            agents.backstory["Social Media Manager"],
                             agent_context,
                             manager_llm,
                         )
                         art_critic = Agent(
                             "art critic",
-                            agent_backstory["Art Critic"],
+                            agents.backstory["Art Critic"],
                             agent_context,
                             creative_llm,
                         )

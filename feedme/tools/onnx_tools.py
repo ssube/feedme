@@ -12,7 +12,7 @@ from packit.tracing import trace
 from PIL import Image
 from traceloop.sdk.decorators import tool
 
-from feedme.data import checkpoint_models, get_save_path, onnx, prompts, size_presets
+from feedme.data import get_save_path, misc, prompts
 
 logger = getLogger(__name__)
 
@@ -24,8 +24,8 @@ onnx_root = environ.get("ONNX_API", None)
 @tool(name="generate_image")
 def generate_image_tool(prompt: str, count: int, size: ImageSize = "landscape") -> str:
     output_paths = []
-    for i in range(count + int(onnx["extra"])):
-        results = generate_images(prompt, int(onnx["batch"]), size)
+    for i in range(count + int(misc.images.extra)):
+        results = generate_images(prompt, int(misc.images.batch), size)
         if isinstance(results, str):
             output_paths.append(results)
 
@@ -45,7 +45,7 @@ def generate_image_tool(prompt: str, count: int, size: ImageSize = "landscape") 
 def generate_images(
     prompt: str, count: int, size: ImageSize = "landscape"
 ) -> List[Image.Image]:
-    dims = size_presets.get(size)
+    dims = misc.sizes.get(size)
     with trace("generate_images", "feedme.onnx") as (report_args, report_result):
         report_args(prompt=prompt, count=count, size=size)
         job = generate_txt2img(onnx_root, prompt, count, *dims)
@@ -54,14 +54,14 @@ def generate_images(
             return ["Error generating images: could not get job name."]
 
         ready = False
-        for _ in range(int(onnx["retries"])):
+        for _ in range(int(misc.onnx.retries)):
             if check_ready(onnx_root, job):
                 logger.debug("image is ready: %s", job)
                 ready = True
                 break
             else:
                 logger.debug("waiting for image to be ready")
-                sleep(int(onnx["poll"]))
+                sleep(int(misc.onnx.poll))
 
         if not ready:
             report_result({"status": "error", "reason": "image not ready in time"})
@@ -97,11 +97,11 @@ def generate_txt2img(
             "cfg": cfg,
             "steps": steps,
             "prompt": prompt,
-            "negativePrompt": prompts.get("negative_prompt", ""),
+            "negativePrompt": prompts.negative_prompt,
             "width": width,
             "height": height,
             "pipeline": "txt2img-sdxl",
-            "model": choice(checkpoint_models),  # TODO: make this smarter, ask an agent
+            "model": choice(misc.checkpoints),  # TODO: make this smarter, ask an agent
             "tiled_vae": False,
             "unet_overlap": 0.25,
             "unet_tile": 1280,
@@ -121,8 +121,8 @@ def generate_txt2img(
                 "enabled": True,
                 "addSuffix": "",
                 "minLength": 240,
-                "promptFilter": onnx["filter"],
-                "removeTokens": onnx["remove"],
+                "promptFilter": misc.onnx.filter,
+                "removeTokens": misc.onnx.remove,
             },
         },
     }

@@ -42,3 +42,27 @@ sizes: {
 
 bot:
     name: "FeedMe - Demo"
+
+images:
+    min: 3
+    max: 5
+    batch: 1
+    extra: 2
+
+interests:
+    min: 2
+    max: 5
+
+posts:
+    count: 20
+    retry: 3
+
+ranking:
+    concept:
+        max: 5
+        threshold: 3
+    image:
+        max: 5
+        threshold: 3.5
+    post:
+        threshold: 0.65

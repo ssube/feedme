@@ -14,7 +14,7 @@ import websocket  # NOTE: websocket-client (https://github.com/websocket-client/
 from PIL import Image
 from traceloop.sdk.decorators import tool
 
-from feedme.data import checkpoint_models, get_save_path, prompts, size_presets
+from feedme.data import get_save_path, misc, prompts
 
 logger = getLogger(__name__)
 
@@ -78,7 +78,7 @@ def get_images(ws, prompt):
 @tool()
 def generate_images(prompt: str, count: int, size="landscape") -> str:
     cfg = randint(3, 8)
-    dims = size_presets.get(size)
+    dims = misc.sizes.get(size)
     steps = randint(5, 8) * 5
     seed = randint(0, 10000000)
     logger.debug("Generating %s images at %s with prompt: %s", count, dims, prompt)
@@ -102,7 +102,7 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
         "4": {
             "class_type": "CheckpointLoaderSimple",
             "inputs": {
-                "ckpt_name": choice(checkpoint_models),
+                "ckpt_name": choice(misc.checkpoints),
             },
         },
         "5": {
@@ -124,7 +124,7 @@ def generate_images(prompt: str, count: int, size="landscape") -> str:
             "class_type": "CLIPTextEncode",
             "inputs": {
                 "clip": ["4", 1],
-                "text": prompts.get("negative_prompt", ""),
+                "text": prompts.negative_prompt,
             },
         },
         "8": {
