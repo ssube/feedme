@@ -38,6 +38,7 @@ from feedme.utils.misc import (
     str_parser,
 )
 from feedme.utils.promptgen import generate_prompt
+from feedme.utils.state import load_state, save_state, update_state
 
 # set up logging and tracing
 logger = logger_with_colors(__name__, level="DEBUG")
@@ -583,20 +584,27 @@ def main(
     max_interest_count=misc.interests.max,
     post_interests=None,
     post_format=None,
+    post_state=None,
 ):
     post_ratings = []
     post_times = []
     approved_posts = []
     rejected_posts = []
 
-    for _ in range(concept_count):
-        if post_format is None:
-            post_format = choice(misc.formats)
+    # TODO: pick per post
+    if post_format is None:
+        post_format = choice(misc.formats)
 
+    if post_state is None:
+        post_state = load_state()
+
+    for _ in range(concept_count):
         interests = get_random_interest(
             randint(min_interest_count, max_interest_count), interests=post_interests
         )
-        interest_agents = {interest: InterestAgent(interest) for interest in interests}
+        interest_agents = {
+            interest: InterestAgent(interest, **post_state) for interest in interests
+        }
 
         with trace(post_format, "feedme.post") as (report_args, report_output):
             report_args(interests, post_format)
@@ -658,6 +666,7 @@ def main(
                             "modifier": modifier,
                             "post_format": post_format,
                             "theme": theme,
+                            **post_state,
                         }
 
                         report_args_retry(**agent_context)
@@ -805,6 +814,12 @@ def main(
                                 "rating": average_rating,
                             }
                         )
+
+                        # update state
+                        post_state = update_state("approved", post, post_state)
+                        save_state(post_state)
+
+                        # move on to the next post
                         break
                     except Exception as err:
                         logger.exception("failed to process input: %s", input)
