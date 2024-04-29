@@ -6,9 +6,15 @@ from feedme.models.base import dataclass
 
 
 @dataclass
-class MinMaxData:
+class MinMaxInt:
     min: PositiveInt
     max: PositiveInt
+
+
+@dataclass
+class MinMaxFloat:
+    min: PositiveFloat
+    max: PositiveFloat
 
 
 @dataclass
@@ -39,14 +45,12 @@ class BotData:
 
 
 @dataclass
-class CfgData:
+class CfgData(MinMaxFloat):
     increment: PositiveFloat
-    min: PositiveFloat
-    max: PositiveFloat
 
 
 @dataclass
-class StepData(MinMaxData):
+class StepData(MinMaxInt):
     increment: PositiveInt
 
 
@@ -54,13 +58,13 @@ class StepData(MinMaxData):
 class ImageData:
     batch: PositiveInt
     cfg: CfgData
-    count: MinMaxData
+    count: MinMaxInt
     steps: StepData
     extra: int = Field(default=0)
 
 
 @dataclass
-class InterestData(MinMaxData):
+class InterestData(MinMaxInt):
     pass
 
 

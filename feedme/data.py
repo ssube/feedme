@@ -17,12 +17,16 @@ data_files = {
 }
 
 
+def load_yaml(file):
+    with open(file, "r") as f:
+        return load(f, Loader)
+
+
 def load_data(data_base: str):
     data = {}
     for model, file in data_files.items():
-        with open(path.join(data_base, file), "r") as f:
-            model_data = load(f, Loader)
-            data[model] = model(**model_data)
+        model_data = load_yaml(path.join(data_base, file))
+        data[model] = model(**model_data)
 
     return data
 
@@ -32,6 +36,8 @@ load_dotenv(environ.get("FEEDME_ENV", ".env"), override=True)
 data_base = environ.get("FEEDME_DATA", "feedme/data")
 dataset = load_data(data_base=data_base)
 
+
+# expose models
 agents: AgentsModel = dataset[AgentsModel]
 keywords: KeywordsModel = dataset[KeywordsModel]
 misc: MiscData = dataset[MiscData]
