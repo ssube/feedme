@@ -93,6 +93,7 @@ python3 -m feedme.multi_post | tee -a /tmp/feedme.log
 - Set `DEBUG` to wait for an interactive debugger to attach before starting
 - Set `FEEDME_ENV` to load a `.env` file
 - Set `FEEDME_DATA` to the dataset folder that you want to use (defaults to [`feedme/data`](./feedme/data/))
+- Set `FEEDME_DEST` to the output folder that you want to use (defaults to `/tmp/feedme-posts`)
 - Set `IMAGE_TOOL=comfy` and `COMFY_API` to use ComfyUI for image generation
 - Set `IMAGE_TOOL=onnx` and `ONNX_API` to use onnx-web for image generation
 - Set `PACKIT_DRIVER=ollama` and `OLLAMA_API` to use Ollama for text generation
@@ -121,7 +122,7 @@ docker run \
     -it \
     -v ./feedme/data:/feedme/feedme/data:ro \
     -v /tmp/feedme-posts:/tmp/feedme-posts:rw \
-    -e ROOT_PATH=/tmp/feedme-posts \
+    -e FEEDME_DEST=/tmp/feedme-posts \
     -e IMAGE_TOOL=comfy \
     -e POST_TOOL=html \
     -e COMFY_API="comfyui-server:8188" \
