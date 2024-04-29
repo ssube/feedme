@@ -3,6 +3,7 @@ from random import sample
 from re import sub
 
 from packit.formats import format_bullet_list
+from packit.loops import loop_retry
 from traceloop.sdk.decorators import task
 
 from feedme.data import keywords, misc, prompts
@@ -79,12 +80,24 @@ def generate_prompt(agent, description, qk=6):
 
     example_prompts = generate_examples(base_keywords)
 
-    prompt = agent(
+    def one_line_parser(text: str, **kwargs):
+        if text.count("\n") > 0:
+            raise ValueError(
+                "Too many lines in the text. Please reduce your response to one line."
+            )
+
+        return text
+
+    prompt = loop_retry(
+        agent,
         prompts.generate_prompt,
-        example_prompts=format_bullet_list(example_prompts),
-        characters=characters,
-        keywords=base_keywords,
-        scene=scene,
+        context={
+            "example_prompts": format_bullet_list(example_prompts),
+            "characters": characters,
+            "keywords": base_keywords,
+            "scene": scene,
+        },
+        result_parser=one_line_parser,
     )
     prompt = remove_abstract_concepts(agent, prompt)
     prompt = cleanup_sentence(prompt, trailing_period=False)
