@@ -1,20 +1,22 @@
 from typing import Dict, List, Optional, Tuple
 
+from pydantic import Field, PositiveFloat, PositiveInt
+
 from feedme.models.base import dataclass
 
 
 @dataclass
 class MinMaxData:
-    min: int
-    max: int
+    min: PositiveInt
+    max: PositiveInt
 
 
 @dataclass
 class OnnxData:
     filter: str
     remove: str
-    retries: int
-    poll: int
+    retries: PositiveInt
+    poll: PositiveInt
 
 
 @dataclass
@@ -38,23 +40,23 @@ class BotData:
 
 @dataclass
 class CfgData:
-    increment: float
-    min: float
-    max: float
+    increment: PositiveFloat
+    min: PositiveFloat
+    max: PositiveFloat
 
 
 @dataclass
 class StepData(MinMaxData):
-    increment: int
+    increment: PositiveInt
 
 
 @dataclass
 class ImageData:
-    batch: int
+    batch: PositiveInt
     cfg: CfgData
     count: MinMaxData
-    extra: int
     steps: StepData
+    extra: int = Field(default=0)
 
 
 @dataclass
@@ -70,19 +72,19 @@ class PostData:
 
 @dataclass
 class ConceptRankingData:
-    max: int
-    threshold: float
+    max: PositiveInt
+    threshold: PositiveFloat
 
 
 @dataclass
 class ImageRankingData:
-    max: int
-    threshold: float
+    max: PositiveInt
+    threshold: PositiveFloat
 
 
 @dataclass
 class PostRankingData:
-    threshold: float
+    threshold: PositiveFloat
 
 
 @dataclass
@@ -99,7 +101,7 @@ class MiscData:
     checkpoints: List[str]
     onnx: Optional[OnnxData]
     llms: LlmData
-    sizes: Dict[str, Tuple[int, int]]
+    sizes: Dict[str, Tuple[PositiveInt, PositiveInt]]
     bot: BotData
     images: ImageData
     interests: InterestData
