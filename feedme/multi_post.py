@@ -21,6 +21,7 @@ from feedme.data import (
     prompts,
     set_save_path,
 )
+from feedme.state.utils import load_state, save_state, update_state
 from feedme.tools.civitai_tools import close_page, create_post, launch_login
 from feedme.tools.comfy_tools import generate_image_tool as generate_image_comfy
 from feedme.tools.html_tools import template_post
@@ -38,7 +39,6 @@ from feedme.utils.misc import (
     str_parser,
 )
 from feedme.utils.promptgen import generate_prompt
-from feedme.utils.state import load_state, save_state, update_state
 
 # set up logging and tracing
 logger = logger_with_colors(__name__, level="DEBUG")
@@ -602,6 +602,8 @@ def main(
         interests = get_random_interest(
             randint(min_interest_count, max_interest_count), interests=post_interests
         )
+        logger.info("selected interests: %s", interests)
+
         interest_agents = {
             interest: InterestAgent(interest, **post_state) for interest in interests
         }

@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple
 
 from pgmpy.models import MarkovChain
 
-from feedme.utils.state import PostDict, StateDict
+from feedme.state.utils import PostDict, StateDict
 
 logger = getLogger(__name__)
 
@@ -68,25 +68,24 @@ def make_markov_middleware(state_data):
     state_vars, state_keys = get_state_keys(state_data)
 
     def update(status: str, post: PostDict, state: StateDict) -> StateDict:
-        if status in ["approved", "init"]:
-            if len(state) > 0:
-                logger.info("updating state with status %s", state)
-                states = []
-                for key, value in state.items():
-                    states.append((key, state_keys[key].index(value)))
+        if len(state) > 0:
+            logger.info("updating state with status %s", state)
+            states = []
+            for key, value in state.items():
+                states.append((key, state_keys[key].index(value)))
 
-                state_chain.set_start_state(states)
+            state_chain.set_start_state(states)
 
-            for sample in state_chain.generate_sample(size=1):
-                for key, value in zip(state_vars, sample):
-                    value_name = state_keys[key][value.state]
-                    logger.info(
-                        "changing %s from %s to %s",
-                        key,
-                        state.get(key, None),
-                        value_name,
-                    )
-                    state[key] = value_name
+        for sample in state_chain.generate_sample(size=1):
+            for key, value in zip(state_vars, sample):
+                value_name = state_keys[key][value.state]
+                logger.info(
+                    "changing %s from %s to %s",
+                    key,
+                    state.get(key, None),
+                    value_name,
+                )
+                state[key] = value_name
 
         return state
 
