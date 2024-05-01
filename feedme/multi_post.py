@@ -256,7 +256,7 @@ def concept_ranking_each_scale(
 
     # select the top images
     top_images = selected_rankings.most_common(count)
-    logger.info("top images: %s", top_images)
+    logger.info("top concepts: %s", top_images)
 
     return top_images
 
