@@ -91,10 +91,12 @@ def generate_images(
     prompt: str, count: int, size="landscape", prefix="output"
 ) -> List[str]:
     cfg = generate_cfg()
-    dims = misc.sizes.get(size, (512, 512))
+    height, width = misc.sizes.get(size, (512, 512))
     steps = generate_steps(min_steps=int(misc.images.steps.min + cfg))
     seed = randint(0, 10000000)
-    logger.info("generating %s images at %s with prompt: %s", count, dims, prompt)
+    logger.info(
+        "generating %s images at %s by %s with prompt: %s", count, height, width, prompt
+    )
 
     prompt_workflow = {
         "3": {
@@ -106,7 +108,7 @@ def generate_images(
                 "model": ["4", 0],
                 "negative": ["7", 0],
                 "positive": ["6", 0],
-                "sampler_name": "dpmpp_sde",
+                "sampler_name": "euler_ancestral",
                 "scheduler": "normal",
                 "seed": seed,
                 "steps": steps,
@@ -122,8 +124,8 @@ def generate_images(
             "class_type": "EmptyLatentImage",
             "inputs": {
                 "batch_size": count,
-                "height": dims[0],
-                "width": dims[1],
+                "height": height,
+                "width": width,
             },
         },
         "6": {
