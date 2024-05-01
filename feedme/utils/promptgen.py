@@ -50,9 +50,13 @@ def elaborate_quality(agent, base_keywords):
 
 @task()
 def remove_abstract_concepts(agent, base_keywords):
-    return agent(
+    return loop_retry(
+        agent,
         prompts.remove_concepts,
-        keywords=base_keywords,
+        context={
+            "keywords": base_keywords,
+        },
+        result_parser=one_line_parser,
     )
 
 
@@ -67,26 +71,18 @@ def generate_examples(base_keywords, length=120, n=5, k=3):
         logger.info("generating example prompt with keywords: %s", selected_keywords)
         prompt = generate_text(misc.llms.gpt2, ",".join(selected_keywords), length)
         prompt = sub(r"^(.+)(?:,.*)$", r"\1", prompt)
-        example_prompts.append(prompt)
+        example_prompts.append(cleanup_prompt(prompt))
 
     return example_prompts
 
 
 @task()
 def generate_prompt(agent, description, qk=6):
-    base_keywords = generate_keywords(agent, description)
+    base_keywords = cleanup_prompt(generate_keywords(agent, description))
     characters = elaborate_characters(agent, description, base_keywords)
     scene = elaborate_scene(agent, description)
 
     example_prompts = generate_examples(base_keywords)
-
-    def one_line_parser(text: str, **kwargs):
-        if text.count("\n") > 0:
-            raise ValueError(
-                "Too many lines in the text. Please reduce your response to one line."
-            )
-
-        return text
 
     prompt = loop_retry(
         agent,
@@ -100,7 +96,25 @@ def generate_prompt(agent, description, qk=6):
         result_parser=one_line_parser,
     )
     prompt = remove_abstract_concepts(agent, prompt)
-    prompt = cleanup_sentence(prompt, trailing_period=False)
+    prompt = cleanup_prompt(prompt)
 
     quality = sample(keywords.quality, k=qk)
     return prompt + ", " + ", ".join(quality)
+
+
+def cleanup_prompt(prompt):
+    # remove common prefixes
+    for prefix in ["Prompt:", "Keywords:", "Characters:", "Scene:"]:
+        prompt = prompt.replace(prefix, "")
+
+    # remove repeated commas, with or without spaces
+    prompt = sub(r",\s*,", ",", prompt)
+
+    return cleanup_sentence(prompt, trailing_period=False)
+
+
+def one_line_parser(text: str, **kwargs):
+    if text.count("\n") > 0:
+        raise ValueError(prompts.generate_prompt_retry)
+
+    return text

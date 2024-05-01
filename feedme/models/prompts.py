@@ -17,6 +17,7 @@ class PromptsModel:
     generate_ideas: str
     generate_keywords: str
     generate_prompt: str
+    generate_prompt_retry: str
     negative_prompt: str
     post_notice: str
     rank_concepts_binary: str
