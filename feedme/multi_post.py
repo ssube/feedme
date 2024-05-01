@@ -160,7 +160,7 @@ def do_post(post_slug, post_description, post_hash, post, tool=post_tool):
 
 
 @task()
-def generate_concepts(interest_agents, min_words=2, max_words=4):
+def generate_concepts(interest_agents, min_words=3, max_words=6):
     interest_panel = Panel(list(interest_agents.values()), name="concepts")
     panel_results = interest_panel.sample(
         prompts.generate_concepts,

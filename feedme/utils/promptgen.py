@@ -61,7 +61,7 @@ def remove_abstract_concepts(agent, base_keywords):
 
 
 @task()
-def generate_examples(base_keywords, length=120, n=5, k=3):
+def generate_examples(base_keywords, length=180, n=5, k=3):
     keyword_list = base_keywords.split(",")
     keyword_list = [keyword.strip() for keyword in keyword_list]
 
