@@ -12,10 +12,11 @@ from random import choice, randint
 from typing import List
 
 import websocket  # NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from PIL import Image
 from traceloop.sdk.decorators import tool
 
-from feedme.data import get_save_path, misc, prompts
+from feedme.data import data_base, get_save_path, misc, prompts
 from feedme.tools.onnx_tools import generate_batches, generate_cfg, generate_steps
 
 logger = getLogger(__name__)
@@ -94,63 +95,32 @@ def generate_images(
     height, width = misc.sizes.get(size, (512, 512))
     steps = generate_steps(min_steps=int(misc.images.steps.min + cfg))
     seed = randint(0, 10000000)
+    checkpoint = choice(misc.checkpoints)
     logger.info(
         "generating %s images at %s by %s with prompt: %s", count, height, width, prompt
     )
 
-    prompt_workflow = {
-        "3": {
-            "class_type": "KSampler",
-            "inputs": {
-                "cfg": cfg,
-                "denoise": 1,
-                "latent_image": ["5", 0],
-                "model": ["4", 0],
-                "negative": ["7", 0],
-                "positive": ["6", 0],
-                "sampler_name": "euler_ancestral",
-                "scheduler": "normal",
-                "seed": seed,
-                "steps": steps,
-            },
-        },
-        "4": {
-            "class_type": "CheckpointLoaderSimple",
-            "inputs": {
-                "ckpt_name": choice(misc.checkpoints),
-            },
-        },
-        "5": {
-            "class_type": "EmptyLatentImage",
-            "inputs": {
-                "batch_size": count,
-                "height": height,
-                "width": width,
-            },
-        },
-        "6": {
-            "class_type": "CLIPTextEncode",
-            "inputs": {
-                "clip": ["4", 1],
-                "text": prompt,
-            },
-        },
-        "7": {
-            "class_type": "CLIPTextEncode",
-            "inputs": {
-                "clip": ["4", 1],
-                "text": prompts.negative_prompt,
-            },
-        },
-        "8": {
-            "class_type": "VAEDecode",
-            "inputs": {"samples": ["3", 0], "vae": ["4", 2]},
-        },
-        "9": {
-            "class_type": "SaveImage",
-            "inputs": {"filename_prefix": misc.bot.name, "images": ["8", 0]},
-        },
-    }
+    env = Environment(
+        loader=FileSystemLoader(data_base, "feedme/templates"),
+        autoescape=select_autoescape(["json"]),
+    )
+    template = env.get_template("comfy.json.j2")
+    result = template.render(
+        cfg=cfg,
+        height=height,
+        width=width,
+        steps=steps,
+        seed=seed,
+        checkpoint=checkpoint,
+        prompt=prompt,
+        negative_prompt=prompts.negative_prompt,
+        count=count,
+        prefix=misc.bot.name,
+    )
+
+    # parsing here helps ensure the template emits valid JSON
+    logger.debug("template workflow: %s", result)
+    prompt_workflow = json.loads(result)
 
     logger.debug("Connecting to Comfy API at %s", server_address)
     ws = websocket.WebSocket()
